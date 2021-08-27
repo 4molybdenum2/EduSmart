@@ -1,25 +1,42 @@
 {
   "name": "edusmart",
   "version": "1.0.0",
-  "description": "Kind of a clone of google classroom...",
+  "description": "A Google Classroom Clone",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "npm run build:live",
+    "build": "tsc -p .",
+    "build:live": "nodemon --watch './**/*.ts' --exec \"ts-node\" ./app.ts"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/4molybdenum2/EduSmart.git"
   },
-  "author": "Harsh Sharma, Pranshu Saxena and Tathagata Paul",
+  "author": "Harsh, Pranshu and Tathagata",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/4molybdenum2/EduSmart/issues"
   },
   "homepage": "https://github.com/4molybdenum2/EduSmart#readme",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/compression": "^1.7.1",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.5",
+    "@types/node": "^16.7.2",
+    "nodemon": "^2.0.12",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.2"
+  },
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "compression": "^1.7.4",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "mongoose": "^5.13.2",
-    "uuid": "^8.3.2"
+    "google-auth-library": "^7.6.2",
+    "googleapis": "^84.0.0",
+    "helmet": "^4.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.13.0"
   }
 }
