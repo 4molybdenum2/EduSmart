@@ -10,13 +10,10 @@ import {
   Typography,
   Container,
   Divider,
-  IconButton,
-  Icon,
 } from "@material-ui/core";
-import { LockOutlined } from "@material-ui/icons";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { rootStyle, Copyright } from "../Commons";
-import { GoogleLogin, useGoogleLogin } from "react-google-login";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -27,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   avatar: {
-    marginBottom: theme.spacing(1),
+    margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
@@ -36,13 +33,12 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: { margin: theme.spacing(3, 0, 2) },
   root: rootStyle,
-  divider: { marginTop: theme.spacing(1), width: "100%" },
 }));
 
-export default function SignIn() {
+export default function SignUp() {
   const classes = useStyles();
-  const [values, setValues] = useState({ email: "", password: "" });
-  const { email, password } = values;
+  const [values, setValues] = useState({ name: "", email: "", password: "" });
+  const { name, email, password } = values;
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -60,10 +56,10 @@ export default function SignIn() {
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
-          <LockOutlined />
+          <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Sign up
         </Typography>
 
         <form className={classes.form} noValidate onSubmit={onSubmit}>
@@ -72,9 +68,20 @@ export default function SignIn() {
             margin="normal"
             required
             fullWidth
+            label="Name"
+            autoComplete="name"
+            autoFocus
+            value={name}
+            onChange={handleChange("name")}
+          />
+
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
             label="Email Address"
             autoComplete="email"
-            autoFocus
             value={email}
             onChange={handleChange("email")}
           />
@@ -97,31 +104,18 @@ export default function SignIn() {
             variant="contained"
             color="primary"
             className={classes.submit}>
-            Sign In
+            Sign Up
           </Button>
 
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="/signup" variant="body2" underline="none">
-                Don't have an account? Sign Up
+              <Link href="/signin" variant="body2" underline="none">
+                Already have an account? Sign In
               </Link>
             </Grid>
           </Grid>
         </form>
-        <Divider className={classes.divider} />
-        <GoogleLogin
-          clientId="749827096167-dj5v0acsrmj35t7n0onr7qqqlhomcpph.apps.googleusercontent.com"
-          render={(props) => (
-            <IconButton onClick={props.onClick}>
-              <Icon>
-                <img src="/google.svg" width={25} />
-              </Icon>
-            </IconButton>
-          )}
-          onSuccess={responseGoogle}
-          onFailure={responseGoogle}
-          cookiePolicy="single_host_origin"
-        />
+        <Divider variant="middle" />
       </div>
 
       <Box mt="auto" py={3}>
