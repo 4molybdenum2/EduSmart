@@ -1,0 +1,25 @@
+{
+  "name": "edusmart",
+  "version": "1.0.0",
+  "description": "Kind of a clone of google classroom...",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4molybdenum2/EduSmart.git"
+  },
+  "author": "Harsh Sharma, Pranshu Saxena and Tathagata Paul",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/4molybdenum2/EduSmart/issues"
+  },
+  "homepage": "https://github.com/4molybdenum2/EduSmart#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.13.2",
+    "uuid": "^8.3.2"
+  }
+}
