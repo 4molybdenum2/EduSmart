@@ -82,6 +82,7 @@ export const submitTest = async (req: Request, res: Response) => {
                         return res.status(500).json({ error: `Couldn't submit test: ${err}` });
                     }
                 }
+                return res.json(409).json({ error: "You have already submitted a response for this test" });
             }
             return res.status(404).json({ error: "User not found" })
         }
