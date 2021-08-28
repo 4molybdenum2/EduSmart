@@ -161,3 +161,44 @@ export const logout = async (req: Request, res: Response) => {
   }
   return res.json({ error: "You are not logged in" });
 };
+
+export const enroll = async (req: Request, res: Response) => {
+  if (req.cookies?.token) {
+    // TODO: Get isStudent and user ID from cookie or frontend
+    const isStudent = true;
+    const userID = "6129eca18d88cf29a0ad2a59";
+    const courseID = req.params.courseID;
+
+    if (isStudent) {
+      User.findByIdAndUpdate(userID, { $push: { courses: courseID } }, (e) => {
+        if (e) {
+          console.log(e);
+          return res.status(500).json({ error: "Enrollment Error" });
+        }
+        return res.json({ message: "Enrolled successfully" });
+      });
+    }
+
+    return res.status(403).json({ error: "UNAUTHORIZED" });
+  }
+  return res.json({ error: "You are not logged in" });
+};
+
+export const testResults = async (req: Request, res: Response) => {
+  if (req.cookies?.token) {
+    // TODO: Get isStudent and user ID from cookie or frontend
+    const isStudent = true;
+    const userID = "6129eca18d88cf29a0ad2a59";
+
+    if (isStudent) {
+      const results = await (
+        await User.findById(userID).select("testSubmissions -_id")
+      ).populate("testSubmissions.test", "title maxMarks");
+
+      return res.json({ results });
+    }
+
+    return res.status(403).json({ error: "UNAUTHORIZED" });
+  }
+  return res.json({ error: "You are not logged in" });
+};
