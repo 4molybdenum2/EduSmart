@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { OAuth2Client } from "google-auth-library";
 import User from "../models/User";
-import { signToken } from "../middleware/auth";
+import { signToken } from "../utils/signToken";
 
 export const signUp = async (req: Request, res: Response) => {
   if (!req.cookies?.token) {
@@ -18,7 +18,7 @@ export const signUp = async (req: Request, res: Response) => {
           }
 
           signToken({ id: user._id, name, isStudent }, res);
-          return res.json({ message: "Successfully signed up!" });
+          return res.json({ message: "Successfully signed up!", id: user._id, isStudent });
         });
       } else {
         const client = new OAuth2Client(process.env.CLIENT_ID);
@@ -48,7 +48,7 @@ export const signUp = async (req: Request, res: Response) => {
                 }
 
                 signToken({ id: user._id, name: payload.name, isStudent }, res);
-                return res.json({ message: "Successfully signed up!" });
+                return res.json({ message: "Successfully signed up!", id: user._id, isStudent });
               }
             );
           }
@@ -84,7 +84,7 @@ export const login = async (req: Request, res: Response) => {
                 { id: user._id, name: user.name, isStudent: user.isStudent },
                 res
               );
-              return res.json({ message: "Successfully logged in!" });
+              return res.json({ message: "Successfully logged in!", id: user._id, isStudent: user.isStudent });
             }
           );
         } else {
@@ -94,7 +94,7 @@ export const login = async (req: Request, res: Response) => {
               { id: user._id, name: user.name, isStudent: user.isStudent },
               res
             );
-            return res.json({ message: "Successfully logged in!" });
+            return res.json({ message: "Successfully logged in!", id: user._id, isStudent: user.isStudent });
           }
           return res.status(400).json({ error: "Incorrect credentials" });
         }
@@ -132,9 +132,9 @@ export const enroll = async (req: Request, res: Response) => {
 };
 
 export const testResults = async (req: Request, res: Response) => {
-  const results = await (
-    await User.findById(res.locals.id).select("testSubmissions -_id")
-  ).populate("testSubmissions.test", "title maxMarks");
-
+  const results = await User
+    .findById(res.locals.id)
+    .select("testSubmissions -_id")
+    .populate("testSubmissions.test", "title maxMarks");
   return res.json({ results });
 };

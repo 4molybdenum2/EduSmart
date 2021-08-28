@@ -1,13 +1,16 @@
 import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import compression from "compression";
 import helmet from "helmet";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+
+import { isAuth } from "./middleware/auth";
 import userRouter from "./routes/users";
 import courseRouter from "./routes/courses";
 import assignmentRouter from "./routes/assignments";
-import cors from "cors";
-import cookieParser from "cookie-parser";
+import testRouter from "./routes/tests";
 
 dotenv.config();
 const app = express();
@@ -26,6 +29,7 @@ app.use(express.json());
 app.use("/users", userRouter);
 app.use("/courses", courseRouter);
 app.use("/assignments", assignmentRouter);
+app.use("/tests/:courseId", isAuth, testRouter);
 
 mongoose.connect(
   process.env.MONGODB_URI,

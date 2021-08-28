@@ -57,7 +57,7 @@ interface Question {
 
 export interface Test extends Document {
   title: string;
-  startDate: Date;
+  startTime: Date;
   endTime: Date;
   maxMarks: number;
   questions: Array<Question>;
@@ -80,5 +80,5 @@ export interface Course extends Document {
 }
 
 mongoose.model<Assignment>("Assignment", assignmentSchema);
-mongoose.model<Test>("Test", testSchema);
+export const TestModel = mongoose.model<Test>("Test", testSchema);
 export default mongoose.model<Course>("Course", courseSchema);
