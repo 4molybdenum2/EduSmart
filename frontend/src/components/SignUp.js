@@ -12,6 +12,7 @@ import {
   Divider,
   IconButton,
   Icon,
+  Checkbox,
 } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
@@ -120,6 +121,13 @@ export default function SignUp() {
             onChange={handleChange("password")}
           />
 
+          <Box display="flex" justifyContent="start" alignItems="center">
+            Are you a Teacher? <Checkbox
+              color="primary"
+              inputProps={{ 'aria-label': 'secondary checkbox' }}
+            />
+          </Box>
+
           <Button
             type="submit"
             fullWidth
@@ -128,6 +136,7 @@ export default function SignUp() {
             className={classes.submit}>
             Sign Up
           </Button>
+
 
           <Grid container justifyContent="flex-end">
             <Grid item>
