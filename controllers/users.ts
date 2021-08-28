@@ -1,81 +1,58 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { OAuth2Client } from "google-auth-library";
-import jwt from "jsonwebtoken";
 import User from "../models/User";
+import { signToken } from "../middleware/auth";
 
 export const signUp = async (req: Request, res: Response) => {
   if (!req.cookies?.token) {
     const { name, email, password, isStudent, tokenId } = req.body;
-    const exists = await User.findOne({ email });
+    const exists = await User.findOne({ email }).select("_id");
     if (!exists) {
       if (!tokenId) {
         const hash = await bcrypt.hash(password, 10);
-        const user = new User({
-          email,
-          name,
-          password: hash,
-          // TODO: isStudent
-          isStudent: true,
-        });
-        await user.save();
-
-        const token = jwt.sign(
-          {
-            id: user._id,
-            email,
-            name,
-            isStudent,
-          },
-          process.env.JWT_SECRET,
-          {
-            expiresIn: "1d",
+        User.create({ email, name, password: hash, isStudent }, (e, user) => {
+          if (e) {
+            console.log(e);
+            return res.status(500).json({ error: "Sign up Error" });
           }
-        );
-        const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-        res.cookie("token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          expires,
+
+          signToken({ id: user._id, name, isStudent }, res);
+          return res.json({ message: "Successfully signed up!" });
         });
-        return res.json({ message: "Successfully signed up!" });
       } else {
         const client = new OAuth2Client(process.env.CLIENT_ID);
-        const ticket = await client.verifyIdToken({
-          idToken: tokenId,
-          audience: process.env.CLIENT_ID,
-        });
-        const payload = ticket.getPayload();
-        console.log(payload);
-        const user = new User({
-          email: payload.email,
-          name: payload.name,
-          googleId: payload.sub,
-          isStudent,
-        });
-        await user.save();
-
-        const token = jwt.sign(
+        client.verifyIdToken(
           {
-            id: user._id,
-            email: payload.email,
-            name: payload.name,
-            isStudent,
+            idToken: tokenId,
+            audience: process.env.CLIENT_ID,
           },
-          process.env.JWT_SECRET,
-          {
-            expiresIn: "1d",
+          (err, ticket) => {
+            if (err) {
+              console.log(err);
+              return res.status(500).json({ error: "Invalid Token" });
+            }
+
+            const payload = ticket.getPayload();
+            User.create(
+              {
+                email: payload.email,
+                name: payload.name,
+                googleId: payload.sub,
+                isStudent,
+              },
+              (e, user) => {
+                if (e) {
+                  console.log(e);
+                  return res.status(500).json({ error: "Sign up Error" });
+                }
+
+                signToken({ id: user._id, name: payload.name, isStudent }, res);
+                return res.json({ message: "Successfully signed up!" });
+              }
+            );
           }
         );
-
-        const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-        res.cookie("token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          expires,
-        });
-
-        return res.json({ message: "Successfully signed up!" });
       }
     }
     return res.status(409).json({ error: "User already exists" });
@@ -92,57 +69,31 @@ export const login = async (req: Request, res: Response) => {
       if (user) {
         if (tokenId) {
           const client = new OAuth2Client(process.env.CLIENT_ID);
-          const ticket = await client.verifyIdToken({
-            idToken: tokenId,
-            audience: process.env.CLIENT_ID,
-          });
-          const userId = ticket.getPayload().sub;
-
-          const token = jwt.sign(
+          client.verifyIdToken(
             {
-              id: user._id,
-              email,
-              name: user.name,
-              googleId: userId,
-              isStudent: user.isStudent,
+              idToken: tokenId,
+              audience: process.env.CLIENT_ID,
             },
-            process.env.JWT_SECRET,
-            {
-              expiresIn: "1d",
+            (err, _) => {
+              if (err) {
+                console.log(err);
+                return res.status(500).json({ error: "Invalid Token" });
+              }
+
+              signToken(
+                { id: user._id, name: user.name, isStudent: user.isStudent },
+                res
+              );
+              return res.json({ message: "Successfully logged in!" });
             }
           );
-
-          const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-          res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            expires,
-          });
-
-          return res.json({ message: "Successfully logged in!" });
         } else {
           const isMatch = await bcrypt.compare(password, user.password);
           if (isMatch) {
-            const token = jwt.sign(
-              {
-                id: user._id,
-                email,
-                name: user.name,
-                isStudent: user.isStudent,
-              },
-              process.env.JWT_SECRET,
-              {
-                expiresIn: "1d",
-              }
+            signToken(
+              { id: user._id, name: user.name, isStudent: user.isStudent },
+              res
             );
-
-            const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-            res.cookie("token", token, {
-              httpOnly: true,
-              secure: process.env.NODE_ENV === "production",
-              expires,
-            });
-
             return res.json({ message: "Successfully logged in!" });
           }
           return res.status(400).json({ error: "Incorrect credentials" });
@@ -163,42 +114,27 @@ export const logout = async (req: Request, res: Response) => {
 };
 
 export const enroll = async (req: Request, res: Response) => {
-  if (req.cookies?.token) {
-    // TODO: Get isStudent and user ID from cookie or frontend
-    const isStudent = true;
-    const userID = "6129eca18d88cf29a0ad2a59";
-    const courseID = req.params.courseID;
-
-    if (isStudent) {
-      User.findByIdAndUpdate(userID, { $push: { courses: courseID } }, (e) => {
+  if (res.locals.isStudent) {
+    User.findByIdAndUpdate(
+      res.locals.id,
+      { $push: { courses: req.params.courseID } },
+      (e) => {
         if (e) {
           console.log(e);
           return res.status(500).json({ error: "Enrollment Error" });
         }
         return res.json({ message: "Enrolled successfully" });
-      });
-    }
-
-    return res.status(403).json({ error: "UNAUTHORIZED" });
+      }
+    );
   }
-  return res.json({ error: "You are not logged in" });
+
+  return res.status(403).json({ error: "UNAUTHORIZED" });
 };
 
 export const testResults = async (req: Request, res: Response) => {
-  if (req.cookies?.token) {
-    // TODO: Get isStudent and user ID from cookie or frontend
-    const isStudent = true;
-    const userID = "6129eca18d88cf29a0ad2a59";
+  const results = await (
+    await User.findById(res.locals.id).select("testSubmissions -_id")
+  ).populate("testSubmissions.test", "title maxMarks");
 
-    if (isStudent) {
-      const results = await (
-        await User.findById(userID).select("testSubmissions -_id")
-      ).populate("testSubmissions.test", "title maxMarks");
-
-      return res.json({ results });
-    }
-
-    return res.status(403).json({ error: "UNAUTHORIZED" });
-  }
-  return res.json({ error: "You are not logged in" });
+  return res.json({ results });
 };

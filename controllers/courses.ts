@@ -15,38 +15,31 @@ export const getCourses = async (req: Request, res: Response) => {
 };
 
 export const addCourse = async (req: Request, res: Response) => {
-  if (req.cookies?.token) {
-    const { courseName, schedule } = req.body;
-    const userID = req.params.userID;
+  const { courseName, schedule } = req.body;
 
-    // TODO: Get isStudent from cookie or frontend
-    const isStudent = false;
-
-    if (!isStudent) {
-      Course.create(
-        { name: courseName, professor: userID, schedule },
-        (err, course) => {
-          if (err) {
-            console.log(err);
-            return res.status(500).json({ error: "Create Course Error" });
-          }
-
-          User.findByIdAndUpdate(
-            userID,
-            { $push: { courses: course._id } },
-            (e, user) => {
-              if (e) {
-                console.log(e);
-                return res.status(500).json({ error: "Create Course Error" });
-              }
-              return res.json({ message: "Course created successfully" });
-            }
-          );
+  if (!res.locals.isStudent) {
+    Course.create(
+      { name: courseName, professor: res.locals.id, schedule },
+      (err, course) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: "Create Course Error" });
         }
-      );
-    }
 
-    return res.status(403).json({ error: "UNAUTHORIZED" });
+        User.findByIdAndUpdate(
+          res.locals.id,
+          { $push: { courses: course._id } },
+          (e) => {
+            if (e) {
+              console.log(e);
+              return res.status(500).json({ error: "Create Course Error" });
+            }
+            return res.json({ message: "Course created successfully" });
+          }
+        );
+      }
+    );
   }
-  return res.json({ error: "You are not logged in" });
+
+  return res.status(403).json({ error: "UNAUTHORIZED" });
 };

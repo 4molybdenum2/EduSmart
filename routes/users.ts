@@ -1,4 +1,5 @@
 import express from "express";
+import { isAuth } from "../middleware/auth";
 import {
   enroll,
   login,
@@ -12,7 +13,7 @@ router.post("/signup", signUp);
 router.post("/login", login);
 router.get("/logout", logout);
 
-router.post("/:courseID", enroll);
-router.get("/results", testResults);
+router.post("/:courseID", isAuth, enroll);
+router.get("/results", isAuth, testResults);
 
 export default router;
