@@ -5,8 +5,13 @@ import {
   Card,
   CardContent,
   Typography,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Button
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import MenuIcon from '@material-ui/icons/Menu';
 import React, { useState, useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({
@@ -19,6 +24,12 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   cardContent: { flexGrow: 1 },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
 }));
 
 const Dashboard = () => {
@@ -33,6 +44,17 @@ const Dashboard = () => {
     <>
       <CssBaseline />
       {/* TODO: AppBar here */}
+      <AppBar color="transparent" position="static">
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}>
+            Welcome 'insert name here'
+          </Typography>
+          <Button className={classes.menuButton} color="inherit">Dashboard</Button>
+          <Button className={classes.menuButton} color="inherit">Assignments</Button>
+          <Button className={classes.menuButton} color="inherit">Calendar</Button>
+          <Button className={classes.menuButton} color="inherit">Logout &rarr;</Button>
+        </Toolbar>
+      </AppBar>
       <main className={classes.main}>
         {courses.length > 0 && (
           <Container maxWidth="md" className={classes.grid}>

@@ -100,7 +100,6 @@ export default function SignIn() {
           </Grid>
         </form>
         <Divider className={classes.divider} />
-        {/* TODO: Align Left */}
         <GoogleLogin
           clientId="749827096167-dj5v0acsrmj35t7n0onr7qqqlhomcpph.apps.googleusercontent.com"
           render={(props) => (
