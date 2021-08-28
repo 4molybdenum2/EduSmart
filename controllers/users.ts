@@ -6,10 +6,10 @@ import User from "../models/User";
 
 export const signUp = async (req: Request, res: Response) => {
   if (!req.cookies?.token) {
-    const { name, email, password, isStudent, googleId } = req.body;
+    const { name, email, password, isStudent, tokenId } = req.body;
     const exists = await User.findOne({ email });
     if (!exists) {
-      if (!googleId) {
+      if (!tokenId) {
         const hash = await bcrypt.hash(password, 10);
         const user = new User({
           email,
@@ -24,6 +24,8 @@ export const signUp = async (req: Request, res: Response) => {
           {
             id: user._id,
             email,
+            name,
+            isStudent,
           },
           process.env.JWT_SECRET,
           {
@@ -40,15 +42,15 @@ export const signUp = async (req: Request, res: Response) => {
       } else {
         const client = new OAuth2Client(process.env.CLIENT_ID);
         const ticket = await client.verifyIdToken({
-          idToken: googleId,
+          idToken: tokenId,
           audience: process.env.CLIENT_ID,
         });
         const payload = ticket.getPayload();
-        const userId = payload.sub;
+        console.log(payload);
         const user = new User({
-          email,
-          name,
-          googleId: userId,
+          email: payload.email,
+          name: payload.name,
+          googleId: payload.sub,
           isStudent,
         });
         await user.save();
@@ -56,9 +58,8 @@ export const signUp = async (req: Request, res: Response) => {
         const token = jwt.sign(
           {
             id: user._id,
-            email,
-            googleId,
-            name,
+            email: payload.email,
+            name: payload.name,
             isStudent,
           },
           process.env.JWT_SECRET,
@@ -84,15 +85,15 @@ export const signUp = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   if (!req.cookies?.token) {
-    const { email, password, googleId } = req.body;
-    if (email && (password || googleId)) {
+    const { email, password, tokenId } = req.body;
+    if (email && (password || tokenId)) {
       const user = await User.findOne({ email });
 
       if (user) {
-        if (googleId) {
+        if (tokenId) {
           const client = new OAuth2Client(process.env.CLIENT_ID);
           const ticket = await client.verifyIdToken({
-            idToken: googleId,
+            idToken: tokenId,
             audience: process.env.CLIENT_ID,
           });
           const userId = ticket.getPayload().sub;

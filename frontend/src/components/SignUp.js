@@ -63,8 +63,14 @@ export default function SignUp() {
     setValues({ ...values, [name]: event.target.value });
 
   const responseGoogle = (response) => {
-    // TODO: Google Sign up Handling
-    console.log(response);
+    const { tokenId } = response;
+    auth({ tokenId }, "signup").then((data) => {
+      if (data.error) setStatus({ error: data.error.trim(), success: false });
+      else {
+        // TODO: Token Handling and Redirect to Dashboard
+        setStatus({ error: "", success: true });
+      }
+    });
   };
 
   return (
@@ -132,20 +138,24 @@ export default function SignUp() {
           </Grid>
         </form>
         <Divider className={classes.divider} />
-        {/* TODO: Align Left */}
-        <GoogleLogin
-          clientId="749827096167-dj5v0acsrmj35t7n0onr7qqqlhomcpph.apps.googleusercontent.com"
-          render={(props) => (
-            <IconButton onClick={props.onClick}>
-              <Icon>
-                <img src="/google.svg" width={25} />
-              </Icon>
-            </IconButton>
-          )}
-          onSuccess={responseGoogle}
-          onFailure={responseGoogle}
-          cookiePolicy="single_host_origin"
-        />
+        <Box display="flex" alignItems="center">
+          <Typography color="primary" variant="body2">
+            Or continue with
+          </Typography>
+          <GoogleLogin
+            clientId="749827096167-dj5v0acsrmj35t7n0onr7qqqlhomcpph.apps.googleusercontent.com"
+            render={(props) => (
+              <IconButton onClick={props.onClick}>
+                <Icon>
+                  <img src="/google.svg" width={25} />
+                </Icon>
+              </IconButton>
+            )}
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+            cookiePolicy="single_host_origin"
+          />
+        </Box>
       </div>
 
       <Box mt="auto" py={3}>
