@@ -4,6 +4,8 @@ import helmet from "helmet";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRouter from "./routes/users";
+import courseRouter from "./routes/courses";
+import assignmentRouter from "./routes/assignments";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -13,7 +15,7 @@ const PORT = process.env.PORT || 8000;
 
 app.use(compression());
 app.use(cors());
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(
   helmet({
     contentSecurityPolicy:
@@ -22,6 +24,8 @@ app.use(
 );
 app.use(express.json());
 app.use("/users", userRouter);
+app.use("/courses", courseRouter);
+app.use("/assignments", assignmentRouter);
 
 mongoose.connect(
   process.env.MONGODB_URI,
