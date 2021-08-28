@@ -54,7 +54,7 @@ export default function Home() {
                   <Button
                     variant="contained"
                     color="primary"
-                    href="/signin"
+                    href="/signup"
                     disableElevation>
                     Sign-up
                   </Button>

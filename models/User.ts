@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   isStudent: { type: Boolean, default: true },
   password: String,
   googleId: String,
-  courses: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
   assignmentSubmissions: [
     {
       assignment: { type: mongoose.Schema.Types.ObjectId, ref: "Assignment" },

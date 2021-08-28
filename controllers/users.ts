@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User";
 
 export const signUp = async (req: Request, res: Response) => {
-  if (!req.cookies.token) {
+  if (!req.cookies?.token) {
     const { name, email, password, isStudent, googleId } = req.body;
     const exists = await User.findOne({ email });
     if (!exists) {
@@ -15,7 +15,8 @@ export const signUp = async (req: Request, res: Response) => {
           email,
           name,
           password: hash,
-          isStudent,
+          // TODO: isStudent
+          isStudent: true,
         });
         await user.save();
 
@@ -82,7 +83,7 @@ export const signUp = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  if (!req.cookies.token) {
+  if (!req.cookies?.token) {
     const { email, password, googleId } = req.body;
     if (email && (password || googleId)) {
       const user = await User.findOne({ email });
@@ -150,4 +151,12 @@ export const login = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Incorrect credentials" });
   }
   return res.json({ message: "You are already logged in" });
+};
+
+export const logout = async (req: Request, res: Response) => {
+  if (req.cookies?.token) {
+    res.clearCookie("token");
+    return res.json({ message: "Logged out" });
+  }
+  return res.json({ error: "You are not logged in" });
 };

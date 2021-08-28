@@ -32,7 +32,7 @@ const Dashboard = () => {
   return (
     <>
       <CssBaseline />
-      {/* AppBar here */}
+      {/* TODO: AppBar here */}
       <main className={classes.main}>
         {courses.length > 0 && (
           <Container maxWidth="md" className={classes.grid}>

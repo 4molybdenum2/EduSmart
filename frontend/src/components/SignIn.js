@@ -16,42 +16,34 @@ import {
 import { LockOutlined } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import { rootStyle, Copyright } from "../Commons";
-import { GoogleLogin, useGoogleLogin } from "react-google-login";
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    marginBottom: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    marginBottom: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: { margin: theme.spacing(3, 0, 2) },
-  root: rootStyle,
-  divider: { marginTop: theme.spacing(1), width: "100%" },
-}));
+import { GoogleLogin } from "react-google-login";
+import { auth } from "../helper/auth";
+import { useStyles } from "./SignUp";
 
 export default function SignIn() {
   const classes = useStyles();
   const [values, setValues] = useState({ email: "", password: "" });
   const { email, password } = values;
 
+  const [status, setStatus] = useState({ error: "", success: false });
+  const { error, success } = status;
+
   const onSubmit = (event) => {
     event.preventDefault();
+    auth(values, "login").then((data) => {
+      if (data.error) setStatus({ error: data.error.trim(), success: false });
+      else {
+        // TODO: Token Handling
+        setStatus({ error: "", success: true });
+      }
+    });
   };
 
   const handleChange = (name) => (event) =>
     setValues({ ...values, [name]: event.target.value });
 
   const responseGoogle = (response) => {
+    // TODO: Google Sign in Handling
     console.log(response);
   };
 
@@ -109,6 +101,7 @@ export default function SignIn() {
           </Grid>
         </form>
         <Divider className={classes.divider} />
+        {/* TODO: Align Left */}
         <GoogleLogin
           clientId="749827096167-dj5v0acsrmj35t7n0onr7qqqlhomcpph.apps.googleusercontent.com"
           render={(props) => (
