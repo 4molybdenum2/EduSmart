@@ -14,8 +14,7 @@ import {
   Icon,
 } from "@material-ui/core";
 import { LockOutlined } from "@material-ui/icons";
-import { makeStyles } from "@material-ui/core/styles";
-import { rootStyle, Copyright } from "../Commons";
+import { Copyright } from "../Commons";
 import { GoogleLogin } from "react-google-login";
 import { auth } from "../helper/auth";
 import { useStyles } from "./SignUp";

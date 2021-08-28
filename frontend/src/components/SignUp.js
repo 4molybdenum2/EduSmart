@@ -10,11 +10,14 @@ import {
   Typography,
   Container,
   Divider,
+  IconButton,
+  Icon,
 } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { rootStyle, Copyright } from "../Commons";
 import { auth } from "../helper/auth";
+import { GoogleLogin } from "react-google-login";
 
 export const useStyles = makeStyles((theme) => ({
   paper: {
