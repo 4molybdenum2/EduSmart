@@ -9,6 +9,7 @@ import Dashboard from "./components/UserHome/Dashboard";
 import AddCourse from "./components/UserHome/AddCourse";
 import StudentAddCourse from "./components/UserHome/StudentAddCourse";
 import Tests from "./components/UserHome/Tests";
+import { NotFound } from "./Commons";
 
 const LoginRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -61,10 +62,9 @@ const Routes = () => {
         <TeacherRoute path="/courses/add" component={AddCourse} exact />
         <StudentRoute path="/scourses/add" component={StudentAddCourse} exact />
         <LoginRoute path="/tests" component={Tests} exact />
-        <LoginRoute path="/assignment" component={Assignment} exact />
-        <Route path="/">
-          <Home />
-        </Route>
+        <LoginRoute path="/assignment" component={Assignment} />
+        <Route path="/" component={Home} exact/>
+        <Route path="*" component={NotFound} />
       </Switch>
     </BrowserRouter>
   );

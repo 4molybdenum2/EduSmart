@@ -1,4 +1,4 @@
-import { Link, Typography, Snackbar, Slide } from "@material-ui/core";
+import { Link, Typography, Snackbar, Slide, Container } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
 
 export const Copyright = () => (
@@ -32,3 +32,14 @@ export const Toast = ({ open, onClose, type, text }) => (
     </MuiAlert>
   </Snackbar>
 );
+
+
+export const NotFound = () => {
+  return(
+    <Container maxWidth="sm" style={{ height: "100vh", display: "flex", alignItems: "center"}}>
+      <Typography variant="h2">
+        404! Page not Found
+      </Typography>
+    </Container>
+  );
+}

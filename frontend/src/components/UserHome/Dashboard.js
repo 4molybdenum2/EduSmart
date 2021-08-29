@@ -50,7 +50,7 @@ const Dashboard = () => {
                     {/* TODO: Course-code or initials in Card Media */}
                     <CardContent className={classes.cardContent}>
                       <Link
-                        to="/assignment"
+                        to={`/assignment?id=${id}`}
                         style={{ textDecoration: "none", color: "#000" }}>
                         <Typography gutterBottom variant="h5" component="h2">
                           {course.name}

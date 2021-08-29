@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -8,6 +8,11 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import {
+  useLocation
+} from "react-router-dom";
+
+import { getAssignments, isAuthenticated } from "../../helper/API";
 
 const useStyles = makeStyles({
     root: {
@@ -32,18 +37,35 @@ const posts = [
 
 export default function Assignment() {
   const classes = useStyles();
+  const [assignments, setAssignments] = useState([]);
+
+  const search = useLocation().search;
+  const id = new URLSearchParams(search).get('id');
+
+  useEffect(() => {
+    getAssignments(id).then((data) => {
+      if (data.error) 
+        console.log(data.error.trim());
+      else{
+        setAssignments(data);
+      }
+    });
+  }, [assignments, id]);
 
   return (
     <Grid item xs={12} md={8}>
-      {posts.map((post) => (
+      {assignments.map((assignment) => (
           <Card className={classes.root}>
           <CardActionArea>
             <CardContent>
               <Typography gutterBottom variant="h5" component="h2">
-                {post.title}
+                {assignment.title}
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p">
-                {post.description}
+                {assignment.description}
+              </Typography>
+              <Typography variant="body3" color="textSecondary" component="p">
+                {assignment.dueDate}
               </Typography>
             </CardContent>
           </CardActionArea>
@@ -58,8 +80,12 @@ export default function Assignment() {
         </Card>
       ))}
     </Grid>
+
+
   );
 }
+
+// /assignment/:courseId
 
 Assignment.propTypes = {
   posts: PropTypes.array,
