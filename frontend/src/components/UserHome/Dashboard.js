@@ -67,7 +67,7 @@ const Dashboard = () => {
           </Container>
         )}
 
-        <Link to={isStudent ? "" : "/courses/add"}>
+        <Link to={isStudent ? "/scourses/add" : "/courses/add"}>
           <Fab
             color="primary"
             aria-label="add"

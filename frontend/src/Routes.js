@@ -7,6 +7,7 @@ import Home from "./components/Home";
 import { isAuthenticated } from "./helper/API";
 import Dashboard from "./components/UserHome/Dashboard";
 import AddCourse from "./components/UserHome/AddCourse";
+import StudentAddCourse from "./components/UserHome/StudentAddCourse";
 import Tests from "./components/UserHome/Tests";
 
 const LoginRoute = ({ component: Component, ...rest }) => (
@@ -58,6 +59,7 @@ const Routes = () => {
         <NonLoginRoute path="/signup" component={SignUp} exact />
         <LoginRoute path="/dashboard" component={Dashboard} exact />
         <TeacherRoute path="/courses/add" component={AddCourse} exact />
+        <StudentRoute path="/scourses/add" component={StudentAddCourse} exact />
         <LoginRoute path="/tests" component={Tests} exact />
         <LoginRoute path="/assignment" component={Assignment} exact />
         <Route path="/">
