@@ -5,7 +5,7 @@ import {
   CardContent,
   Typography,
   Fab,
-  Link
+  Link,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Add } from "@material-ui/icons";
@@ -47,21 +47,19 @@ const Dashboard = () => {
             <Grid container spacing={4}>
               {courses.map((course, id) => (
                 <Grid item key={id} xs={12} sm={6} md={4}>
-                  <Card className={classes.card}>
-                    {/* TODO: Course-code or initials in Card Media */}
-                    <CardContent className={classes.cardContent}>
-                      <Link
-                        to={`/assignment?id=${id}`}
-                        style={{ textDecoration: "none", color: "#000" }}>
+                  <Link href={`/assignment?id=${id}`} underline="none">
+                    <Card className={classes.card}>
+                      {/* TODO: Course-code or initials in Card Media */}
+                      <CardContent className={classes.cardContent}>
                         <Typography gutterBottom variant="h5" component="h2">
                           {course.name}
                         </Typography>
-                        </Link>
                         <Typography color="textSecondary">
                           {course.professor.name}
                         </Typography>
                       </CardContent>
                     </Card>
+                  </Link>
                 </Grid>
               ))}
             </Grid>
