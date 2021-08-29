@@ -15,8 +15,10 @@ export const createTest = async (req: Request, res: Response) => {
           maxMarks,
           questions,
         });
+        await test.save();
         course.tests.push(test);
         await course.save();
+        return res.json({ message: "Test created" });
       } catch (e) {
         return res.json({
           error: "Something went wrong, couldn't create course",
@@ -29,6 +31,7 @@ export const createTest = async (req: Request, res: Response) => {
 
 export const getTest = async (req: Request, res: Response) => {
   if (!res.locals.isStudent) {
+    console.log(req.params.testId);
     const test = await TestModel.findById(req.params.testId);
     if (test) return res.json({ test });
     else return res.json({ error: "Test not found" });
@@ -37,23 +40,32 @@ export const getTest = async (req: Request, res: Response) => {
 };
 
 export const viewTest = async (req: Request, res: Response) => {
+  //TODO: check for startTime and endTime
   if (res.locals.isStudent) {
     const test = await TestModel.findById(req.params.testId);
     if (test) {
-      test.questions.map((question) => ({
+      const testQuestions = test.questions.map((question) => ({
         title: question.title,
         opt1: question.opt1,
         opt2: question.opt2,
         opt3: question.opt3,
         opt4: question.opt4,
       }));
-      return res.json({ test });
+      return res.json({
+        title: test.title,
+        startTime: test.startTime,
+        endTime: test.endTime,
+        questions: testQuestions,
+        maxMarks: test.maxMarks,
+        _id: test._id
+      });
     } else return res.json({ error: "Test not found" });
   } else
     return res.json({ error: "You must be a teacher to perform this action" });
 };
 
 export const submitTest = async (req: Request, res: Response) => {
+  //TODO: check for endTime
   if (res.locals.isStudent) {
     const test = await TestModel.findById(req.params.testId);
     if (test) {
@@ -62,7 +74,7 @@ export const submitTest = async (req: Request, res: Response) => {
         if (
           !user.testSubmissions
             .map((submission) => submission.test)
-            .includes(test)
+            .includes(test._id)
         ) {
           try {
             const { answers }: { answers: Array<number> } = req.body;
@@ -71,7 +83,7 @@ export const submitTest = async (req: Request, res: Response) => {
               for (let i = 0; i < test.questions.length; i++) {
                 if (answers[i] == test.questions[i].answer) count++;
               }
-              const marks = (count / test.maxMarks) * 100;
+              const marks = (count / test.questions.length) * test.maxMarks;
               user.testSubmissions.push({ test, marks });
               await user.save();
               return res.json({ marks });
