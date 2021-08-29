@@ -2,6 +2,7 @@ import express from "express";
 import { isAuth } from "../middleware/auth";
 import {
   enroll,
+  getSchedule,
   login,
   logout,
   signUp,
@@ -15,5 +16,6 @@ router.get("/logout", logout);
 
 router.post("/:courseID", isAuth, enroll);
 router.get("/results", isAuth, testResults);
+router.get("/schedule", isAuth, getSchedule)
 
 export default router;

@@ -5,11 +5,11 @@ import {
   CardContent,
   Typography,
   Fab,
+  Link
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Add } from "@material-ui/icons";
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { getCourses, isAuthenticated } from "../../helper/API";
 import UserHome from "../UserHome";
 
@@ -35,6 +35,7 @@ const Dashboard = () => {
   useEffect(() => {
     getCourses(id).then((data) => {
       if (data.error) console.log(data.error.trim());
+      else setCourses(data.courses);
     });
   }, [courses]);
 
@@ -46,28 +47,26 @@ const Dashboard = () => {
             <Grid container spacing={4}>
               {courses.map((course, id) => (
                 <Grid item key={id} xs={12} sm={6} md={4}>
-                  <Card className={classes.card}>
-                    {/* TODO: Course-code or initials in Card Media */}
-                    <CardContent className={classes.cardContent}>
-                      <Link
-                        to="/assignment"
-                        style={{ textDecoration: "none", color: "#000" }}>
+                  <Link href="/assignment" underline="none">
+                    <Card className={classes.card}>
+                      {/* TODO: Course-code or initials in Card Media */}
+                      <CardContent className={classes.cardContent}>
                         <Typography gutterBottom variant="h5" component="h2">
                           {course.name}
                         </Typography>
-                      </Link>
-                      <Typography color="textSecondary">
-                        {course.professor}
-                      </Typography>
-                    </CardContent>
-                  </Card>
+                        <Typography color="textSecondary">
+                          {course.professor.name}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 </Grid>
               ))}
             </Grid>
           </Container>
         )}
 
-        <Link to={isStudent ? "/scourses/add" : "/courses/add"}>
+        <Link href={isStudent ? "/scourses/add" : "/courses/add"}>
           <Fab
             color="primary"
             aria-label="add"

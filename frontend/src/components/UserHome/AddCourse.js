@@ -26,13 +26,31 @@ const AddCourse = () => {
     friday: moment().toISOString(),
   });
 
+  const [days, setDays] = useState({
+    monday: true,
+    tuesday: true,
+    wednesday: true,
+    thursday: true,
+    friday: true,
+  });
+
   const handleDateChange = (name) => (event) =>
     setSchedule({ ...schedule, [name]: event.toISOString() });
 
   const onSubmit = () => {
-    createCourse({ name, schedule }).then((data) => {
+    const timeSchedule = {};
+    Object.keys(days).map((day) => {
+      if (days[day]) {
+        const dt = moment(schedule[day]);
+        let rem = dt.minute() % 15;
+        rem > 7 ? dt.add(15 - rem, "minutes") : dt.subtract(rem, "minutes");
+        timeSchedule[day] = dt.format("hh:mm A");
+      } else timeSchedule[day] = "";
+    });
+
+    createCourse({ name, schedule: timeSchedule }).then((data) => {
       if (data.error) setStatus({ error: data.error.trim(), success: false });
-      else console.log("OK");
+      else console.log(data);
     });
   };
 
@@ -56,6 +74,7 @@ const AddCourse = () => {
             <MuiPickersUtilsProvider utils={MomentUtils}>
               {Object.keys(schedule).map((day, i) => (
                 <Box
+                  key={i}
                   m={1}
                   style={{
                     display: "flex",
@@ -63,7 +82,8 @@ const AddCourse = () => {
                     justifyContent: "space-between",
                   }}>
                   <Checkbox
-                    defaultChecked
+                    checked={days[day]}
+                    onChange={() => setDays({ ...days, [day]: !days[day] })}
                     color="primary"
                     inputProps={{ "aria-label": "secondary checkbox" }}
                   />

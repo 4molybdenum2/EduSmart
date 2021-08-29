@@ -5,14 +5,16 @@ import Course from "../models/Course";
 export const getCourses = async (req: Request, res: Response) => {
   User.findById(res.locals.id)
     .select("courses -_id")
-    .populate("course", "name professor")
+    .populate({
+      path: "courses",
+      select: "name professor -_id",
+      populate: { path: "professor", model: "User", select: "name -_id" },
+    })
     .exec((e, courses) => {
       if (e) {
         console.log(e);
         return res.json({ error: "Fetching Course Error" });
-      }
-
-      return res.json(courses);
+      } else return res.json(courses);
     });
 };
 

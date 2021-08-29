@@ -70,8 +70,6 @@ export interface Course extends Document {
     wednesday: string;
     thursday: string;
     friday: string;
-    saturday: string;
-    sunday: string;
   };
   assignments: Array<Assignment>;
   tests: Array<Test>;

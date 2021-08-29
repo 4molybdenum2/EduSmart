@@ -27,12 +27,9 @@ export const createCourse = (course) => {
 export const addCourseStudent = (courseId) => {
   axios
     .post(`/users/${courseId}`)
-    .then((res) => {
-      console.log(res.data);
-      return res.data;
-    })
+    .then((res) => res.data)
     .catch((e) => console.log(e));
-}
+};
 export const onAuth = (data, next) => {
   if (typeof window !== "undefined")
     localStorage.setItem("user", JSON.stringify(data));
