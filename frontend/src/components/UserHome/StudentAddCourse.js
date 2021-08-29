@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Box, Container, Button } from "@material-ui/core";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
-import { Copyright } from "../../Commons";
+import { Copyright, Toast } from "../../Commons";
+import { addCourseStudent } from "../../helper/API";
 
 import UserHome from "../UserHome";
 
@@ -15,7 +16,12 @@ const StudentAddCourse = ({ children }) => {
 
 
   const onSubmit = () => {
-    console.log('submit');
+    if(id !== ""){
+        addCourseStudent(id).then((data) => {
+            if (data.error) setStatus({ error: data.error.trim(), success: false });
+            else console.log("OK");
+        });
+    }
   };
 
   return (
@@ -44,6 +50,16 @@ const StudentAddCourse = ({ children }) => {
           Add Course
         </Button>
         </ValidatorForm>
+
+        {error && (
+          <Toast
+            type="error"
+            text={error}
+            open={error}
+            onClose={() => setStatus({ error: "", success: false })}
+          />
+        )}
+
         <Box mt="auto" py={3}>
           <Copyright />
         </Box>
