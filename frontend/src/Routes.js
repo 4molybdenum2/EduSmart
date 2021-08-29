@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Assignment from "./components/UserCore/Assignment";
+import Calendar from "./components/UserHome/Calendar";
 import Home from "./components/Home";
 import { isAuthenticated } from "./helper/API";
 import Dashboard from "./components/UserHome/Dashboard";
@@ -63,6 +64,7 @@ const Routes = () => {
         <StudentRoute path="/scourses/add" component={StudentAddCourse} exact />
         <LoginRoute path="/tests" component={Tests} exact />
         <LoginRoute path="/assignment" component={Assignment} />
+        <LoginRoute path="/calendar" component={Calendar} />
         <Route path="/" component={Home} exact/>
         <Route path="*" component={NotFound} />
       </Switch>

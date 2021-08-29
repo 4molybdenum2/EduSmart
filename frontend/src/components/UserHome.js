@@ -31,7 +31,7 @@ const UserHome = ({ children }) => {
           <Link to="/tests" className={classes.menuButton} color="inherit">
             Tests
           </Link>
-          <Link to="#" className={classes.menuButton} color="inherit">
+          <Link to="/calendar" className={classes.menuButton} color="inherit">
             Calendar
           </Link>
           <Link
