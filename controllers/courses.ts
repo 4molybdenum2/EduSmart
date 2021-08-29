@@ -7,7 +7,7 @@ export const getCourses = async (req: Request, res: Response) => {
     .select("courses -_id")
     .populate({
       path: "courses",
-      select: "name professor -_id",
+      select: "name professor",
       populate: { path: "professor", model: "User", select: "name -_id" },
     })
     .exec((e, courses) => {

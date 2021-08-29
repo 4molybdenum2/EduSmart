@@ -62,8 +62,8 @@ const Routes = () => {
         <TeacherRoute path="/courses/add" component={AddCourse} exact />
         <StudentRoute path="/scourses/add" component={StudentAddCourse} exact />
         <LoginRoute path="/tests" component={Tests} exact />
-        <LoginRoute path="/assignment" component={Assignment} />
-        <Route path="/" component={Home} exact/>
+        <LoginRoute path="/assignment" component={Assignment} exact />
+        <Route path="/" component={Home} exact />
         <Route path="*" component={NotFound} />
       </Switch>
     </BrowserRouter>

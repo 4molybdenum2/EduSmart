@@ -1,19 +1,22 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Container, Button, Box, Checkbox } from "@material-ui/core";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { TimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import copyText from "copy-text-to-clipboard";
 import { useStyles } from "../SignUp";
 import { Copyright, Toast } from "../../Commons";
 import { createCourse } from "../../helper/API";
+import UserHome from "../UserHome";
 
 import MomentUtils from "@date-io/moment";
 import moment from "moment";
 import "moment/locale/en-in";
-import UserHome from "../UserHome";
 moment.updateLocale("en-in", { week: { dow: 1 } });
 
 const AddCourse = () => {
   const classes = useStyles();
+  const history = useHistory();
   const [name, setName] = useState("");
   const [status, setStatus] = useState({ error: "", success: false });
   const { error, success } = status;
@@ -50,7 +53,7 @@ const AddCourse = () => {
 
     createCourse({ name, schedule: timeSchedule }).then((data) => {
       if (data.error) setStatus({ error: data.error.trim(), success: false });
-      else console.log(data);
+      else setStatus({ error: "", success: data.courseID });
     });
   };
 
@@ -115,6 +118,20 @@ const AddCourse = () => {
             text={error}
             open={error}
             onClose={() => setStatus({ error: "", success: false })}
+          />
+        )}
+
+        {success && (
+          <Toast
+            type="success"
+            text="Click on the Close Icon to copy the Course ID and go back to the Dashboard"
+            open={success}
+            duration={null}
+            onClose={() => {
+              copyText(success);
+              setStatus({ error: "", success: false });
+              history.push("/dashboard");
+            }}
           />
         )}
 

@@ -23,22 +23,18 @@ export const getAssignments = (id) =>
     })
     .catch((e) => console.log(e));
 
-export const createCourse = (course) => {
+export const createCourse = (course) =>
   axios
     .post("/courses/create", course)
-    .then((res) => {
-      console.log(res.data);
-      return res.data;
-    })
+    .then((res) => res.data)
     .catch((e) => console.log(e));
-};
 
-export const addCourseStudent = (courseId) => {
+export const addCourseStudent = (courseId) =>
   axios
     .post(`/users/${courseId}`)
     .then((res) => res.data)
     .catch((e) => console.log(e));
-};
+
 export const onAuth = (data, next) => {
   if (typeof window !== "undefined")
     localStorage.setItem("user", JSON.stringify(data));
