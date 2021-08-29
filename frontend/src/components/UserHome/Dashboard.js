@@ -37,7 +37,7 @@ const Dashboard = () => {
       if (data.error) console.log(data.error.trim());
       else setCourses(data.courses);
     });
-  }, [courses]);
+  }, [courses.name]);
 
   return (
     <UserHome>
@@ -47,7 +47,7 @@ const Dashboard = () => {
             <Grid container spacing={4}>
               {courses.map((course, id) => (
                 <Grid item key={id} xs={12} sm={6} md={4}>
-                  <Link href={`/assignment?id=${id}`} underline="none">
+                  <Link href={`/assignment?id=${course._id}`} underline="none">
                     <Card className={classes.card}>
                       {/* TODO: Course-code or initials in Card Media */}
                       <CardContent className={classes.cardContent}>
