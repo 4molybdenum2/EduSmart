@@ -35,13 +35,10 @@ export const addCourse = async (req: Request, res: Response) => {
             if (e) {
               console.log(e);
               return res.json({ error: "Create Course Error" });
-            }
-            return res.json({ message: "Course created successfully" });
+            } else return res.json({ courseID: course._id });
           }
         );
       }
     );
-  }
-
-  return res.json({ error: "UNAUTHORIZED" });
+  } else return res.json({ error: "UNAUTHORIZED" });
 };

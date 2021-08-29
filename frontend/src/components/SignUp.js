@@ -69,8 +69,8 @@ export default function SignUp() {
     setValues({ ...values, [name]: event.target.value });
 
   const responseGoogle = (response) => {
-    const { tokenId } = response;
-    auth({ tokenId, isStudent }, "signup").then((data) => {
+    const { tokenId, profileObj: {email: g_mail} } = response;
+    auth({ tokenId, isStudent, email: g_mail }, "signup").then((data) => {
       if (data.error) setStatus({ error: data.error.trim(), success: false });
       else onAuth(data, () => setStatus({ error: "", success: true }));
     });

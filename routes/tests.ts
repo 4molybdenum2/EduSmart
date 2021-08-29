@@ -1,16 +1,17 @@
 import express from "express";
-import { isAuth } from "../middleware/auth";
 import {
   createTest,
   getTest,
   submitTest,
   viewTest,
+  viewResults
 } from "../controllers/tests";
 
 const router = express.Router();
-router.post("/new", isAuth, createTest);
-router.get("/:testId", isAuth, viewTest);
-router.get("/:testId/teachers", isAuth, getTest);
-router.post("/:testId/submit", isAuth, submitTest);
+router.post("/new", createTest);
+router.get("/:testId/view", viewTest);
+router.get("/:testId", getTest);
+router.get("/:testId/results", viewResults);
+router.post("/:testId/submit", submitTest);
 
 export default router;
