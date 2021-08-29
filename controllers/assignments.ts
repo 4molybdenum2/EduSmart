@@ -3,8 +3,7 @@ import User from "../models/User";
 import Course from "../models/Course";
 
 export const submitAssignment = async (req: Request, res: Response) => {
-  const assignment = req.params.assignmentID;
-  const { link } = req.body;
+  const { link, assignment } = req.body;
 
   if (res.locals.isStudent) {
     User.findByIdAndUpdate(
