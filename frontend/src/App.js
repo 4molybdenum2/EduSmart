@@ -4,29 +4,45 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Assignment from "./components/UserCore/Assignment";
 import UserHome from "./components/UserHome";
+import { isAuthenticated } from "./helper/API";
 import "./index.css";
+
+const LoginRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={(props) =>
+      isAuthenticated() ? <Component {...props} /> : <Redirect to="/signin" />
+    }
+  />
+);
+
+const NonLoginRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={(props) => {
+      if (isAuthenticated()) return <Redirect to="/dashboard" />;
+      else return <Component {...props} />;
+    }}
+  />
+);
 
 const App = () => {
   return (
     <Switch>
-      <Route path="/signin" exact>
-        <SignIn />
-      </Route>
-      <Route path="/signup" exact>
-        <SignUp />
-      </Route>
-      <Route path="/dashboard" exact>
-        <UserHome screen="dashboard"/>
-      </Route>
-      <Route path="/courses/add" exact>
-        <UserHome screen="addCourse" />
-      </Route>
-      <Route path="/tests" exact>
-        <UserHome screen={"tests"}/>
-      </Route>
-      <Route path="/assignment" exact>
-        <Assignment />
-      </Route>
+      <NonLoginRoute path="/signin" component={SignIn} exact />
+      <NonLoginRoute path="/signup" component={SignUp} exact />
+      <LoginRoute
+        path="/dashboard"
+        component={UserHome({ screen: "dashboard" })}
+      />
+
+      <LoginRoute
+        path="/courses/add"
+        component={UserHome({ screen: "addCourse" })}
+      />
+
+      <LoginRoute path="/tests" component={UserHome({ screen: "tests" })} />
+      <LoginRoute path="/assignment" component={Assignment} exact />
       <Route path="/">
         <Home />
       </Route>

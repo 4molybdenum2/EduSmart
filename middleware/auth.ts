@@ -19,11 +19,11 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
         next();
       }
 
-      return res.status(403).json({ error: "Invalid token" });
+      return res.json({ error: "Invalid token" });
     } catch (error) {
-      return res.status(403).json({ error: "Invalid token" });
+      return res.json({ error: "Invalid token" });
     }
   }
-  return res.status(403).json({ error: "You are not logged in" });
+  return res.json({ error: "You are not logged in" });
 };
 
