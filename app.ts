@@ -37,6 +37,7 @@ mongoose.connect(
     useNewUrlParser: true,
     useUnifiedTopology: true,
     autoIndex: false,
+    useFindAndModify: false
   },
   () => {
     app.listen(PORT, () => {

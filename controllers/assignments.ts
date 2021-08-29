@@ -4,7 +4,7 @@ import Course from "../models/Course";
 
 export const submitAssignment = async (req: Request, res: Response) => {
   const { link, assignment } = req.body;
-
+  // TODO: check for due date & previous submissions
   if (res.locals.isStudent) {
     User.findByIdAndUpdate(
       res.locals.id,

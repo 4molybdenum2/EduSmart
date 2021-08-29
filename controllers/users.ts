@@ -102,8 +102,6 @@ export const login = async (req: Request, res: Response) => {
               expires,
             });
 
-            console.log(req.cookies);
-
             return res.json({ id, name, isStudent });
           } else return res.json({ error: "Incorrect credentials" });
         }
