@@ -17,13 +17,9 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
         res.locals.id = id;
         res.locals.isStudent = isStudent;
         next();
-      }
-
-      return res.json({ error: "Invalid token" });
+      } else return res.json({ error: "Invalid token" });
     } catch (error) {
       return res.json({ error: "Invalid token" });
     }
-  }
-  return res.json({ error: "You are not logged in" });
+  } else return res.json({ error: "You are not logged in" });
 };
-

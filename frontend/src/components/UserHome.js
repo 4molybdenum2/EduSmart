@@ -2,9 +2,7 @@ import { CssBaseline, Typography, AppBar, Toolbar } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import React from "react";
-import Dashboard from "./UserHome/Dashboard";
-import Tests from "./UserHome/Tests";
-import AddCourse from "./UserHome/AddCourse";
+import { isAuthenticated, logout } from "../helper/API";
 
 const useStyles = makeStyles((theme) => ({
   root: { flexGrow: 1 },
@@ -12,23 +10,12 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
     textDecoration: "none",
     color: "black",
-  }
+  },
 }));
 
-const UserHome = ({ screen }) => {
+const UserHome = ({ children }) => {
   const classes = useStyles();
-  const renderComponent = (comp) => {
-    switch (comp) {
-      case "dashboard":
-        return <Dashboard />;
-      case "tests":
-        return <Tests />;
-      case "addCourse":
-        return <AddCourse />
-      default:
-        return null;
-    }
-  };
+  const {name} = isAuthenticated();
 
   return (
     <div className={classes.root}>
@@ -36,7 +23,7 @@ const UserHome = ({ screen }) => {
       <AppBar color="transparent" elevation={1} position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.root}>
-            Welcome 'insert name here'
+            Welcome {name}
           </Typography>
           <Link to="/dashboard" className={classes.menuButton} color="inherit">
             Dashboard
@@ -47,12 +34,16 @@ const UserHome = ({ screen }) => {
           <Link to="#" className={classes.menuButton} color="inherit">
             Calendar
           </Link>
-          <Link to="#" className={classes.menuButton} color="inherit">
+          <Link
+            to="/"
+            className={classes.menuButton}
+            color="inherit"
+            onClick={logout}>
             Logout
           </Link>
         </Toolbar>
       </AppBar>
-      {renderComponent(screen)}
+      {children}
     </div>
   );
 };

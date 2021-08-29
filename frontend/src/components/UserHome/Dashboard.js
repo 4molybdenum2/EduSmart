@@ -1,5 +1,4 @@
 import {
-  CssBaseline,
   Container,
   Grid,
   Card,
@@ -12,6 +11,7 @@ import { Add } from "@material-ui/icons";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getCourses, isAuthenticated } from "../../helper/API";
+import UserHome from "../UserHome";
 
 const useStyles = makeStyles((theme) => ({
   main: { marginTop: theme.spacing(10), marginBottom: theme.spacing(8) },
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Dashboard = () => {
-  const { id } = isAuthenticated();
+  const { id, isStudent } = isAuthenticated();
   const classes = useStyles();
   const [courses, setCourses] = useState([]);
 
@@ -39,8 +39,7 @@ const Dashboard = () => {
   }, [courses]);
 
   return (
-    <>
-      <CssBaseline />
+    <UserHome>
       <main className={classes.main}>
         {courses.length > 0 && (
           <Container maxWidth="md" className={classes.grid}>
@@ -68,14 +67,16 @@ const Dashboard = () => {
           </Container>
         )}
 
-        <Fab
-          color="primary"
-          aria-label="add"
-          style={{ position: "absolute", bottom: "10%", right: "5%" }}>
-          <Add />
-        </Fab>
+        <Link to={isStudent ? "" : "/courses/add"}>
+          <Fab
+            color="primary"
+            aria-label="add"
+            style={{ position: "absolute", bottom: "10%", right: "5%" }}>
+            <Add />
+          </Fab>
+        </Link>
       </main>
-    </>
+    </UserHome>
   );
 };
 

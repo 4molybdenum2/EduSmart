@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CssBaseline, Container, Button, Box, Checkbox} from "@material-ui/core";
+import { Container, Button, Box, Checkbox } from "@material-ui/core";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { TimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { useStyles } from "../SignUp";
@@ -9,6 +9,7 @@ import { createCourse } from "../../helper/API";
 import MomentUtils from "@date-io/moment";
 import moment from "moment";
 import "moment/locale/en-in";
+import UserHome from "../UserHome";
 moment.updateLocale("en-in", { week: { dow: 1 } });
 
 const AddCourse = () => {
@@ -36,65 +37,72 @@ const AddCourse = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs" className={classes.root}>
-      <CssBaseline />
-      <div className={classes.paper}>
-        <ValidatorForm className={classes.form} onSubmit={onSubmit}>
-          <TextValidator
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            label="Course Name"
-            autoFocus
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            validators={["required"]}
-            errorMessages={["All fields are mandatory"]}
+    <UserHome>
+      <Container component="main" maxWidth="xs" className={classes.root}>
+        <div className={classes.paper}>
+          <ValidatorForm className={classes.form} onSubmit={onSubmit}>
+            <TextValidator
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              label="Course Name"
+              autoFocus
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              validators={["required"]}
+              errorMessages={["All fields are mandatory"]}
+            />
+
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+              {Object.keys(schedule).map((day, i) => (
+                <Box
+                  m={1}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}>
+                  <Checkbox
+                    defaultChecked
+                    color="primary"
+                    inputProps={{ "aria-label": "secondary checkbox" }}
+                  />
+                  <span>{day.toUpperCase()}</span>:
+                  <TimePicker
+                    key={i}
+                    value={schedule[day]}
+                    onChange={handleDateChange(day)}
+                    minutesStep={15}
+                  />
+                </Box>
+              ))}
+            </MuiPickersUtilsProvider>
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}>
+              Add Course
+            </Button>
+          </ValidatorForm>
+        </div>
+
+        {error && (
+          <Toast
+            type="error"
+            text={error}
+            open={error}
+            onClose={() => setStatus({ error: "", success: false })}
           />
+        )}
 
-          <MuiPickersUtilsProvider utils={MomentUtils}>
-            {Object.keys(schedule).map((day, i) => (
-              <Box m={1} style={{ display: "flex", alignItems: "center", justifyContent: "space-between"}}>
-                <Checkbox
-                  defaultChecked
-                  color="primary"
-                  inputProps={{ 'aria-label': 'secondary checkbox' }}
-                />
-                <span>{day.toUpperCase()}</span>:
-                <TimePicker
-                  key={i}
-                  value={schedule[day]}
-                  onChange={handleDateChange(day)}
-                  minutesStep={15}
-                />
-              </Box>
-            ))}
-          </MuiPickersUtilsProvider>
-
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}>
-            Add Course
-          </Button>
-        </ValidatorForm>
-      </div>
-
-      {error && (
-        <Toast
-          type="error"
-          text={error}
-          open={error}
-          onClose={() => setStatus({ error: "", success: false })}
-        />
-      )}
-
-      <Box mt="auto" py={3}>
-        <Copyright />
-      </Box>
-    </Container>
+        <Box mt="auto" py={3}>
+          <Copyright />
+        </Box>
+      </Container>
+    </UserHome>
   );
 };
 

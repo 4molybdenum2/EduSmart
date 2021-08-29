@@ -1,5 +1,6 @@
 import axios from "axios";
 axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.withCredentials = true;
 
 export const auth = (user, url) =>
   axios
@@ -10,10 +11,7 @@ export const auth = (user, url) =>
 export const getCourses = () =>
   axios
     .get("/courses")
-    .then((res) => {
-      console.log(res);
-      return res.data;
-    })
+    .then((res) => res.data)
     .catch((e) => console.log(e));
 
 export const createCourse = (course) => {
@@ -28,21 +26,21 @@ export const createCourse = (course) => {
 
 export const onAuth = (data, next) => {
   if (typeof window !== "undefined")
-    localStorage.setItem("jwt", JSON.stringify(data));
+    localStorage.setItem("user", JSON.stringify(data));
   next();
 };
 
 export const isAuthenticated = () => {
   if (typeof window == "undefined") return false;
   else
-    return localStorage.getItem("jwt")
-      ? JSON.parse(localStorage.getItem("jwt"))
+    return localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user"))
       : false;
 };
 
 export const logout = () => {
   if (typeof window !== "undefined") {
-    localStorage.removeItem("jwt");
+    localStorage.removeItem("user");
     axios
       .get(`/users/logout`)
       .then((res) => res.data)
