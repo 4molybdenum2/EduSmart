@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CssBaseline, Container, Button, Box } from "@material-ui/core";
+import { CssBaseline, Container, Button, Box, Checkbox} from "@material-ui/core";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { TimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { useStyles } from "../SignUp";
@@ -44,7 +44,7 @@ const AddCourse = () => {
             variant="outlined"
             margin="normal"
             fullWidth
-            label="Name"
+            label="Course Name"
             autoFocus
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -54,12 +54,20 @@ const AddCourse = () => {
 
           <MuiPickersUtilsProvider utils={MomentUtils}>
             {Object.keys(schedule).map((day, i) => (
-              <TimePicker
-                key={i}
-                value={schedule[day]}
-                onChange={handleDateChange(day)}
-                minutesStep={15}
-              />
+              <Box m={1} style={{ display: "flex", alignItems: "center", justifyContent: "space-between"}}>
+                <Checkbox
+                  defaultChecked
+                  color="primary"
+                  inputProps={{ 'aria-label': 'secondary checkbox' }}
+                />
+                <span>{day.toUpperCase()}</span>:
+                <TimePicker
+                  key={i}
+                  value={schedule[day]}
+                  onChange={handleDateChange(day)}
+                  minutesStep={15}
+                />
+              </Box>
             ))}
           </MuiPickersUtilsProvider>
 
@@ -69,7 +77,7 @@ const AddCourse = () => {
             variant="contained"
             color="primary"
             className={classes.submit}>
-            Submit
+            Add Course
           </Button>
         </ValidatorForm>
       </div>

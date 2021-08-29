@@ -36,10 +36,7 @@ const App = () => {
         component={UserHome({ screen: "dashboard" })}
       />
 
-      <LoginRoute
-        path="/courses/add"
-        component={UserHome({ screen: "addCourse" })}
-      />
+      <LoginRoute path="/courses/add" component={UserHome({ screen: "addCourse" })} />
 
       <LoginRoute path="/tests" component={UserHome({ screen: "tests" })} />
       <LoginRoute path="/assignment" component={Assignment} exact />
