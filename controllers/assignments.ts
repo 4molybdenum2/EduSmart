@@ -13,14 +13,12 @@ export const submitAssignment = async (req: Request, res: Response) => {
       (e) => {
         if (e) {
           console.log(e);
-          return res.status(500).json({ error: "Assignment Submission Error" });
+          return res.json({ error: "Assignment Submission Error" });
         }
         return res.json({ message: "Assignment Submitted successfully" });
       }
     );
-  }
-
-  return res.status(403).json({ error: "UNAUTHORIZED" });
+  } else return res.json({ error: "UNAUTHORIZED" });
 };
 
 export const addAssignment = async (req: Request, res: Response) => {
@@ -34,12 +32,10 @@ export const addAssignment = async (req: Request, res: Response) => {
       (e) => {
         if (e) {
           console.log(e);
-          return res.status(500).json({ error: "Assignment Creation Error" });
+          return res.json({ error: "Assignment Creation Error" });
         }
         return res.json({ message: "Assignment Created successfully" });
       }
     );
-  }
-
-  return res.status(403).json({ error: "UNAUTHORIZED" });
+  } else return res.json({ error: "UNAUTHORIZED" });
 };

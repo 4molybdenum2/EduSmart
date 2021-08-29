@@ -145,3 +145,15 @@ export const testResults = async (req: Request, res: Response) => {
       } else return res.json(results);
     });
 };
+
+export const getSchedule = async (req: Request, res: Response) => {
+  User.findById(res.locals.id)
+    .select("courses -_id")
+    .populate("courses", "schedule")
+    .exec((e, courses) => {
+      if (e) {
+        console.log(e);
+        return res.json({ error: "Fetching Course Error" });
+      } else return res.json(courses);
+    });
+};

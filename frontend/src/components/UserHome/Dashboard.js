@@ -5,11 +5,11 @@ import {
   CardContent,
   Typography,
   Fab,
+  Link
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Add } from "@material-ui/icons";
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { getCourses, isAuthenticated } from "../../helper/API";
 import UserHome from "../UserHome";
 
@@ -35,6 +35,7 @@ const Dashboard = () => {
   useEffect(() => {
     getCourses(id).then((data) => {
       if (data.error) console.log(data.error.trim());
+      else setCourses(data.courses);
     });
   }, [courses]);
 
@@ -55,19 +56,19 @@ const Dashboard = () => {
                         <Typography gutterBottom variant="h5" component="h2">
                           {course.name}
                         </Typography>
-                      </Link>
-                      <Typography color="textSecondary">
-                        {course.professor}
-                      </Typography>
-                    </CardContent>
-                  </Card>
+                        </Link>
+                        <Typography color="textSecondary">
+                          {course.professor.name}
+                        </Typography>
+                      </CardContent>
+                    </Card>
                 </Grid>
               ))}
             </Grid>
           </Container>
         )}
 
-        <Link to={isStudent ? "/scourses/add" : "/courses/add"}>
+        <Link href={isStudent ? "/scourses/add" : "/courses/add"}>
           <Fab
             color="primary"
             aria-label="add"
