@@ -3,7 +3,6 @@ import {
   Avatar,
   Button,
   CssBaseline,
-  TextField,
   Link,
   Grid,
   Box,
@@ -12,18 +11,20 @@ import {
   Divider,
   IconButton,
   Icon,
-  Checkbox,
+  Switch,
 } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
-import { rootStyle, Copyright } from "../Commons";
-import { auth } from "../helper/auth";
+import { rootStyle, Copyright, Toast } from "../Commons";
+import { auth, onAuth } from "../helper/API";
 import { GoogleLogin } from "react-google-login";
+import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
+import { Redirect } from "react-router-dom";
 
 export const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
-    marginBottom: theme.spacing(8),
+    marginBottom: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -43,20 +44,24 @@ export const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
   const classes = useStyles();
-  const [values, setValues] = useState({ name: "", email: "", password: "" });
-  const { name, email, password } = values;
+  const [values, setValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+    isStudent: true,
+  });
+  const { name, email, password, isStudent } = values;
 
   const [status, setStatus] = useState({ error: "", success: false });
   const { error, success } = status;
 
   const onSubmit = (event) => {
     event.preventDefault();
+    setValues({ name: "", email: "", password: "", isStudent: true });
+
     auth(values, "signup").then((data) => {
       if (data.error) setStatus({ error: data.error.trim(), success: false });
-      else {
-        // TODO: Token Handling and Redirect to Dashboard
-        setStatus({ error: "", success: true });
-      }
+      else onAuth(data, () => setStatus({ error: "", success: true }));
     });
   };
 
@@ -65,13 +70,14 @@ export default function SignUp() {
 
   const responseGoogle = (response) => {
     const { tokenId } = response;
-    auth({ tokenId }, "signup").then((data) => {
+    auth({ tokenId, isStudent }, "signup").then((data) => {
       if (data.error) setStatus({ error: data.error.trim(), success: false });
-      else {
-        // TODO: Token Handling and Redirect to Dashboard
-        setStatus({ error: "", success: true });
-      }
+      else onAuth(data, () => setStatus({ error: "", success: true }));
     });
+  };
+
+  const redirect = () => {
+    if (success) return <Redirect to="/dashboard" />;
   };
 
   return (
@@ -85,46 +91,59 @@ export default function SignUp() {
           Sign up
         </Typography>
 
-        <form className={classes.form} noValidate onSubmit={onSubmit}>
-          <TextField
+        <ValidatorForm className={classes.form} onSubmit={onSubmit}>
+          <TextValidator
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             label="Name"
             autoComplete="name"
             autoFocus
             value={name}
             onChange={handleChange("name")}
+            validators={["required"]}
+            errorMessages={["All fields are mandatory"]}
           />
 
-          <TextField
+          <TextValidator
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             label="Email Address"
             autoComplete="email"
             value={email}
             onChange={handleChange("email")}
+            validators={["required", "isEmail"]}
+            errorMessages={[
+              "All fields are mandatory",
+              "Invalid Value for E-Mail",
+            ]}
           />
 
-          <TextField
+          <TextValidator
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             label="Password"
             type="password"
             autoComplete="current-password"
             value={password}
             onChange={handleChange("password")}
+            validators={[
+              "required",
+              "matchRegexp:^(?=.*\\d)(?=.*[a-z])(?=.*[a-zA-Z]).{8,}$",
+            ]}
+            errorMessages={[
+              "All fields are mandatory",
+              "Password must be at least 8 characters and contain at least 1 number and 1 letter",
+            ]}
           />
 
           <Box display="flex" justifyContent="start" alignItems="center">
-            Are you a Teacher? <Checkbox
-              color="primary"
-              inputProps={{ 'aria-label': 'secondary checkbox' }}
+            Are you a Teacher?
+            <Switch
+              checked={!isStudent}
+              onChange={() => setValues({ ...values, isStudent: !isStudent })}
             />
           </Box>
 
@@ -137,7 +156,6 @@ export default function SignUp() {
             Sign Up
           </Button>
 
-
           <Grid container justifyContent="flex-end">
             <Grid item>
               <Link href="/signin" variant="body2" underline="none">
@@ -145,7 +163,7 @@ export default function SignUp() {
               </Link>
             </Grid>
           </Grid>
-        </form>
+        </ValidatorForm>
         <Divider className={classes.divider} />
         <Box display="flex" alignItems="center">
           <Typography color="primary" variant="body2">
@@ -156,7 +174,7 @@ export default function SignUp() {
             render={(props) => (
               <IconButton onClick={props.onClick}>
                 <Icon>
-                  <img src="/google.svg" width={25} />
+                  <img src="/google.svg" width={25} alt="Google" />
                 </Icon>
               </IconButton>
             )}
@@ -167,6 +185,16 @@ export default function SignUp() {
         </Box>
       </div>
 
+      {error && (
+        <Toast
+          type="error"
+          text={error}
+          open={error}
+          onClose={() => setStatus({ error: "", success: false })}
+        />
+      )}
+
+      {redirect()}
       <Box mt="auto" py={3}>
         <Copyright />
       </Box>

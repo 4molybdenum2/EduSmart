@@ -3,7 +3,6 @@ import {
   Avatar,
   Button,
   CssBaseline,
-  TextField,
   Link,
   Grid,
   Box,
@@ -14,10 +13,12 @@ import {
   Icon,
 } from "@material-ui/core";
 import { LockOutlined } from "@material-ui/icons";
-import { Copyright } from "../Commons";
+import { Copyright, Toast } from "../Commons";
 import { GoogleLogin } from "react-google-login";
-import { auth } from "../helper/auth";
 import { useStyles } from "./SignUp";
+import { Redirect } from "react-router-dom";
+import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
+import { auth, onAuth } from "../helper/API";
 
 export default function SignIn() {
   const classes = useStyles();
@@ -29,12 +30,11 @@ export default function SignIn() {
 
   const onSubmit = (event) => {
     event.preventDefault();
+    setValues({ email: "", password: "" });
+
     auth(values, "login").then((data) => {
       if (data.error) setStatus({ error: data.error.trim(), success: false });
-      else {
-        // TODO: Token Handling
-        setStatus({ error: "", success: true });
-      }
+      else onAuth(data, () => setStatus({ error: "", success: true }));
     });
   };
 
@@ -45,11 +45,12 @@ export default function SignIn() {
     const { tokenId } = response;
     auth({ tokenId }, "login").then((data) => {
       if (data.error) setStatus({ error: data.error.trim(), success: false });
-      else {
-        // TODO: Token Handling and Redirect to Dashboard
-        setStatus({ error: "", success: true });
-      }
+      else onAuth(data, () => setStatus({ error: "", success: true }));
     });
+  };
+
+  const redirect = () => {
+    if (success) return <Redirect to="/dashboard" />;
   };
 
   return (
@@ -63,29 +64,34 @@ export default function SignIn() {
           Sign in
         </Typography>
 
-        <form className={classes.form} noValidate onSubmit={onSubmit}>
-          <TextField
+        <ValidatorForm className={classes.form} onSubmit={onSubmit}>
+          <TextValidator
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             label="Email Address"
             autoComplete="email"
             autoFocus
             value={email}
             onChange={handleChange("email")}
+            validators={["required", "isEmail"]}
+            errorMessages={[
+              "All fields are mandatory",
+              "Invalid Value for E-Mail",
+            ]}
           />
 
-          <TextField
+          <TextValidator
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             label="Password"
             type="password"
             autoComplete="current-password"
             value={password}
             onChange={handleChange("password")}
+            validators={["required"]}
+            errorMessages={["All fields are mandatory"]}
           />
 
           <Button
@@ -104,7 +110,7 @@ export default function SignIn() {
               </Link>
             </Grid>
           </Grid>
-        </form>
+        </ValidatorForm>
         <Divider className={classes.divider} />
         <Box display="flex" alignItems="center">
           <Typography color="primary" variant="body2">
@@ -115,7 +121,7 @@ export default function SignIn() {
             render={(props) => (
               <IconButton onClick={props.onClick}>
                 <Icon>
-                  <img src="/google.svg" width={25} />
+                  <img src="/google.svg" width={25} alt="Google" />
                 </Icon>
               </IconButton>
             )}
@@ -126,6 +132,16 @@ export default function SignIn() {
         </Box>
       </div>
 
+      {error && (
+        <Toast
+          type="error"
+          text={error}
+          open={error}
+          onClose={() => setStatus({ error: "", success: false })}
+        />
+      )}
+
+      {redirect()}
       <Box mt="auto" py={3}>
         <Copyright />
       </Box>

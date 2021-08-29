@@ -14,11 +14,18 @@ export const signUp = async (req: Request, res: Response) => {
         User.create({ email, name, password: hash, isStudent }, (e, user) => {
           if (e) {
             console.log(e);
-            return res.status(500).json({ error: "Sign up Error" });
+            return res.json({ error: "Sign up Error" });
           }
 
-          signToken({ id: user._id, name, isStudent }, res);
-          return res.json({ message: "Successfully signed up!", id: user._id, isStudent });
+          const token = signToken({ id: user._id, name, isStudent });
+          const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+          res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            expires,
+          });
+
+          return res.json({ id: user._id, isStudent });
         });
       } else {
         const client = new OAuth2Client(process.env.CLIENT_ID);
@@ -30,7 +37,7 @@ export const signUp = async (req: Request, res: Response) => {
           (err, ticket) => {
             if (err) {
               console.log(err);
-              return res.status(500).json({ error: "Invalid Token" });
+              return res.json({ error: "Invalid Token" });
             }
 
             const payload = ticket.getPayload();
@@ -44,18 +51,30 @@ export const signUp = async (req: Request, res: Response) => {
               (e, user) => {
                 if (e) {
                   console.log(e);
-                  return res.status(500).json({ error: "Sign up Error" });
+                  return res.json({ error: "Sign up Error" });
                 }
 
-                signToken({ id: user._id, name: payload.name, isStudent }, res);
-                return res.json({ message: "Successfully signed up!", id: user._id, isStudent });
+                const token = signToken({
+                  id: user._id,
+                  name: payload.name,
+                  isStudent,
+                });
+
+                const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+                res.cookie("token", token, {
+                  httpOnly: true,
+                  secure: process.env.NODE_ENV === "production",
+                  expires,
+                });
+
+                return res.json({ id: user._id, isStudent });
               }
             );
           }
         );
       }
     }
-    return res.status(409).json({ error: "User already exists" });
+    return res.json({ error: "User already exists" });
   }
   return res.json({ message: "You are already logged in" });
 };
@@ -64,7 +83,7 @@ export const login = async (req: Request, res: Response) => {
   if (!req.cookies?.token) {
     const { email, password, tokenId } = req.body;
     if (email && (password || tokenId)) {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).select("name isStudent password");
 
       if (user) {
         if (tokenId) {
@@ -77,30 +96,47 @@ export const login = async (req: Request, res: Response) => {
             (err, _) => {
               if (err) {
                 console.log(err);
-                return res.status(500).json({ error: "Invalid Token" });
+                return res.json({ error: "Invalid Token" });
               }
 
-              signToken(
-                { id: user._id, name: user.name, isStudent: user.isStudent },
-                res
-              );
-              return res.json({ message: "Successfully logged in!", id: user._id, isStudent: user.isStudent });
+              const token = signToken({
+                id: user._id,
+                name: user.name,
+                isStudent: user.isStudent,
+              });
+
+              const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+              res.cookie("token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                expires,
+              });
+
+              return res.json({ id: user._id, isStudent: user.isStudent });
             }
           );
         } else {
           const isMatch = await bcrypt.compare(password, user.password);
           if (isMatch) {
-            signToken(
-              { id: user._id, name: user.name, isStudent: user.isStudent },
-              res
-            );
-            return res.json({ message: "Successfully logged in!", id: user._id, isStudent: user.isStudent });
+            const token = signToken({
+              id: user._id,
+              name: user.name,
+              isStudent: user.isStudent,
+            });
+            const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+            res.cookie("token", token, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              expires,
+            });
+
+            return res.json({ id: user._id, isStudent: user.isStudent });
           }
-          return res.status(400).json({ error: "Incorrect credentials" });
+          return res.json({ error: "Incorrect credentials" });
         }
       }
     }
-    return res.status(400).json({ error: "Incorrect credentials" });
+    return res.json({ error: "Incorrect credentials" });
   }
   return res.json({ message: "You are already logged in" });
 };
@@ -121,20 +157,26 @@ export const enroll = async (req: Request, res: Response) => {
       (e) => {
         if (e) {
           console.log(e);
-          return res.status(500).json({ error: "Enrollment Error" });
+          return res.json({ error: "Enrollment Error" });
         }
         return res.json({ message: "Enrolled successfully" });
       }
     );
   }
 
-  return res.status(403).json({ error: "UNAUTHORIZED" });
+  return res.json({ error: "UNAUTHORIZED" });
 };
 
 export const testResults = async (req: Request, res: Response) => {
-  const results = await User
-    .findById(res.locals.id)
+  User.findById(res.locals.id)
     .select("testSubmissions -_id")
-    .populate("testSubmissions.test", "title maxMarks");
-  return res.json({ results });
+    .populate("testSubmissions.test", "title maxMarks")
+    .exec((e, results) => {
+      if (e) {
+        console.log(e);
+        return res.json({ error: "Fetching Results Error" });
+      }
+
+      return res.json(results);
+    });
 };

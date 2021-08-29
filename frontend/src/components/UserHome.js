@@ -1,57 +1,41 @@
-import {
-  CssBaseline,
-  Container,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Button,
-  Fab,
-} from "@material-ui/core";
+import { CssBaseline, Typography, AppBar, Toolbar } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { Add } from "@material-ui/icons";
-import React, { useState, useEffect } from "react";
-import  Dashboard from "./UserHome/Dashboard";
-import  Tests from "./UserHome/Tests";
+import React from "react";
+import Dashboard from "./UserHome/Dashboard";
+import Tests from "./UserHome/Tests";
+import AddCourse from "./UserHome/AddCourse";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  cardContent: { flexGrow: 1 },
-  menuButton: { marginRight: theme.spacing(2), textDecoration: 'none', color: 'black'},
-  title: { flexGrow: 1 },
+  root: { flexGrow: 1 },
+  menuButton: {
+    marginRight: theme.spacing(2),
+    textDecoration: "none",
+    color: "black",
+  }
 }));
 
 const UserHome = ({ screen }) => {
   const classes = useStyles();
-  const [courses, setCourses] = useState([]);
-  const preventDefault = (event) => event.preventDefault();
-  useEffect(() => {
-    // Get Courses using API
-  }, [courses]);
-
   const renderComponent = (comp) => {
-    switch(comp){
+    switch (comp) {
       case "dashboard":
-        return <Dashboard/>;
+        return <Dashboard />;
       case "tests":
-        return <Tests/>;
+        return <Tests />;
+      case "addCourse":
+        return <AddCourse />
       default:
         return null;
     }
-  }
+  };
 
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar color="transparent" elevation={1} position="static">
         <Toolbar>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h6" className={classes.root}>
             Welcome 'insert name here'
           </Typography>
           <Link to="/dashboard" className={classes.menuButton} color="inherit">
@@ -68,9 +52,7 @@ const UserHome = ({ screen }) => {
           </Link>
         </Toolbar>
       </AppBar>
-      {
-        renderComponent(screen)
-      }
+      {renderComponent(screen)}
     </div>
   );
 };

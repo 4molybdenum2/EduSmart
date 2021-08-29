@@ -16,12 +16,15 @@ const App = () => {
         <SignUp />
       </Route>
       <Route path="/dashboard" exact>
-        <UserHome screen={"dashboard"}/>
+        <UserHome screen="dashboard"/>
+      </Route>
+      <Route path="/courses/add" exact>
+        <UserHome screen="addCourse" />
       </Route>
       <Route path="/tests" exact>
         <UserHome screen={"tests"}/>
       </Route>
-      <Route path="/assignment">
+      <Route path="/assignment" exact>
         <Assignment />
       </Route>
       <Route path="/">

@@ -3,27 +3,29 @@ import User from "../models/User";
 import Course from "../models/Course";
 
 export const getCourses = async (req: Request, res: Response) => {
-  if (req.cookies?.token) {
-    const userID = req.params.userID;
-    const courses = await User.findById(userID)
-      .select("courses -_id")
-      .populate("course", "name professor");
+  User.findById(res.locals.id)
+    .select("courses -_id")
+    .populate("course", "name professor")
+    .exec((e, courses) => {
+      if (e) {
+        console.log(e);
+        return res.json({ error: "Fetching Course Error" });
+      }
 
-    return res.json({ courses });
-  }
-  return res.json({ error: "You are not logged in" });
+      return res.json(courses);
+    });
 };
 
 export const addCourse = async (req: Request, res: Response) => {
-  const { courseName, schedule } = req.body;
+  const { name, schedule } = req.body;
 
   if (!res.locals.isStudent) {
     Course.create(
-      { name: courseName, professor: res.locals.id, schedule },
+      { name, professor: res.locals.id, schedule },
       (err, course) => {
         if (err) {
           console.log(err);
-          return res.status(500).json({ error: "Create Course Error" });
+          return res.json({ error: "Create Course Error" });
         }
 
         User.findByIdAndUpdate(
@@ -32,7 +34,7 @@ export const addCourse = async (req: Request, res: Response) => {
           (e) => {
             if (e) {
               console.log(e);
-              return res.status(500).json({ error: "Create Course Error" });
+              return res.json({ error: "Create Course Error" });
             }
             return res.json({ message: "Course created successfully" });
           }
@@ -41,5 +43,5 @@ export const addCourse = async (req: Request, res: Response) => {
     );
   }
 
-  return res.status(403).json({ error: "UNAUTHORIZED" });
+  return res.json({ error: "UNAUTHORIZED" });
 };

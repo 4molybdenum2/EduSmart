@@ -33,8 +33,6 @@ const courseSchema = new mongoose.Schema({
     wednesday: String,
     thursday: String,
     friday: String,
-    saturday: String,
-    sunday: String,
   },
   assignments: [assignmentSchema],
   tests: [testSchema],
