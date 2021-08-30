@@ -26,6 +26,7 @@ export default function Assignment() {
   const [assignments, setAssignments] = useState([]);
 
   useEffect(() => {
+    // TODO: Course Title and Professor
     getAssignments(courseID).then((data) => {
       if (data.error) console.log(data.error.trim());
       else {
@@ -38,7 +39,7 @@ export default function Assignment() {
 
   return (
     <Container>
-      <h1>Assignments: </h1>
+      <h1>Assignments for Course: {courseID} </h1>
 
       {
         (assignments.length !== 0) ? 
