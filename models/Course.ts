@@ -75,6 +75,6 @@ export interface Course extends Document {
   tests: Array<Test>;
 }
 
-mongoose.model<Assignment>("Assignment", assignmentSchema);
+export const AssignmentModel = mongoose.model<Assignment>("Assignment", assignmentSchema);
 export const TestModel = mongoose.model<Test>("Test", testSchema);
 export default mongoose.model<Course>("Course", courseSchema);

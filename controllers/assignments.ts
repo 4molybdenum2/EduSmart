@@ -1,41 +1,49 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import User from "../models/User";
-import Course from "../models/Course";
+import Course, { AssignmentModel } from "../models/Course";
 
 export const submitAssignment = async (req: Request, res: Response) => {
   const { link, assignment } = req.body;
-  // TODO: check for due date & previous submissions
   if (res.locals.isStudent) {
-    User.findByIdAndUpdate(
-      res.locals.id,
-      { $push: { assignmentSubmissions: { assignment, link } } },
-      (e) => {
-        if (e) {
-          console.log(e);
-          return res.json({ error: "Assignment Submission Error" });
-        }
-        return res.json({ message: "Assignment Submitted successfully" });
-      }
-    );
-  } else return res.json({ error: "UNAUTHORIZED" });
+    const asg = await AssignmentModel.findById(assignment);
+    if (asg) {
+      const user = await User.findById(res.locals.id);
+      if (!user.assignmentSubmissions?.map(submission => submission.assignment).includes(assignment)) {
+        if (new Date() <= asg.dueDate) {
+          try {
+            user.assignmentSubmissions.push({ assignment, link });
+            await user.save();
+            return res.json({ message: "Assignment submitted successfully" });
+          } catch (err) {
+            return res.json({ error: `Couldn't submit assignment: ${err}` });
+          }
+        } else return res.json({ error: "The time for submitting the assignment has closed" });
+      } else return res.json({ error: "You have already submitted this assignment" });
+    } else return res.json({ error: "Assignment not found" });
+  } else return res.json({ error: "You must be a student to perform this action" });
 };
 
 export const addAssignment = async (req: Request, res: Response) => {
   const { courseID, title, description, dueDate } = req.body;
 
   if (!res.locals.isStudent) {
-    Course.findByIdAndUpdate(
-      courseID,
-      { $push: { assignments: { title, description, dueDate } } },
-      (e) => {
-        if (e) {
-          console.log(e);
-          return res.json({ error: "Assignment Creation Error" });
-        } else return res.json({ message: "Assignment Created successfully" });
+    const course = await Course.findById(courseID);
+    if (course) {
+      try {
+        const assignment = new AssignmentModel({
+          title,
+          description,
+          dueDate,
+        });
+        await assignment.save();
+        course.assignments.push(assignment);
+        await course.save();
+      } catch (err) {
+        return res.json({ error: `Couldn't create assignment: ${err}` });
       }
-    );
-  } else return res.json({ error: "UNAUTHORIZED" });
+    } else return res.json({ error: "Course not found" });
+  } else return res.json({ error: "You must be a teacher to perform this action" });
 };
 
 export const getAssignment = async (req: Request, res: Response) => {

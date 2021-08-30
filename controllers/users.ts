@@ -73,7 +73,7 @@ export const login = async (req: Request, res: Response) => {
         if (tokenId) {
           const client = new OAuth2Client(process.env.CLIENT_ID);
           try {
-            const ticket = await client.verifyIdToken({
+            await client.verifyIdToken({
               idToken: tokenId,
               audience: process.env.CLIENT_ID,
             });
@@ -104,7 +104,7 @@ export const login = async (req: Request, res: Response) => {
             return res.json({ id, name, isStudent });
           } else return res.json({ error: "Incorrect credentials" });
         }
-      }
+      } else return res.json({ error: "User not found" });
     } else return res.json({ error: "Incorrect credentials" });
   } else return res.json({ message: "You are already logged in" });
 };
