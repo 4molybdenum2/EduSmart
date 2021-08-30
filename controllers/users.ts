@@ -147,15 +147,18 @@ export const unenroll = async (req: Request, res: Response) => {
 };
 
 export const testResults = async (req: Request, res: Response) => {
-  User.findById(res.locals.id)
-    .select("testSubmissions -_id")
-    .populate("testSubmissions.test", "title maxMarks")
-    .exec((e, results) => {
-      if (e) {
-        console.log(e);
-        return res.json({ error: "Fetching Results Error" });
-      } else return res.json(results);
-    });
+  if (res.locals.isStudent) {
+    User.findById(res.locals.id)
+      .select("testSubmissions -_id")
+      .populate("testSubmissions.test", "title maxMarks")
+      .exec((e, results) => {
+        if (e) {
+          console.log(e);
+          return res.json({ error: "Fetching Results Error" });
+        } else return res.json(results);
+      });
+  } else
+    return res.json({ error: "You must be a student to perform this action" });
 };
 
 export const getSchedule = async (req: Request, res: Response) => {

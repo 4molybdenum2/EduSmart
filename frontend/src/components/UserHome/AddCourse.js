@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
 import { Container, Button, Box, Checkbox } from "@material-ui/core";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { TimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
@@ -8,16 +7,15 @@ import { useStyles } from "../SignUp";
 import { Copyright } from "../../Commons";
 import { createCourse } from "../../helper/API";
 import UserHome from "../UserHome";
+import Toast from "../utils/Toast";
 
 import MomentUtils from "@date-io/moment";
 import moment from "moment";
 import "moment/locale/en-in";
-import Toast from "../utils/Toast";
 moment.updateLocale("en-in", { week: { dow: 1 } });
 
 const AddCourse = () => {
   const classes = useStyles();
-  const history = useHistory();
   const [name, setName] = useState("");
   const [status, setStatus] = useState({ error: "", success: false });
   const { error, success } = status;
@@ -44,12 +42,9 @@ const AddCourse = () => {
   const onSubmit = () => {
     const timeSchedule = {};
     Object.keys(days).map((day) => {
-      if (days[day]) {
-        const dt = moment(schedule[day]);
-        let rem = dt.minute() % 15;
-        rem > 7 ? dt.add(15 - rem, "minutes") : dt.subtract(rem, "minutes");
-        timeSchedule[day] = dt.format("hh:mm A");
-      } else timeSchedule[day] = "";
+      timeSchedule[day] = days[day]
+        ? moment(schedule[day]).format("hh:mm A")
+        : "";
     });
 
     createCourse({ name, schedule: timeSchedule }).then((data) => {
@@ -96,7 +91,6 @@ const AddCourse = () => {
                     key={i}
                     value={schedule[day]}
                     onChange={handleDateChange(day)}
-                    minutesStep={15}
                   />
                 </Box>
               ))}

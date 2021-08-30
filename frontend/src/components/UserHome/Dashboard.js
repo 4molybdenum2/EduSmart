@@ -89,7 +89,6 @@ const Dashboard = () => {
                         history.push("/assignment", {
                           courseID: course._id,
                           name: course.name,
-                          professor: course.professor.name,
                         })
                       }
                       underline="none"

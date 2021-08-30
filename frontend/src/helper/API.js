@@ -20,6 +20,12 @@ export const getAssignments = (courseID) =>
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
+export const createAssignment = (assignment) =>
+  axios
+    .post("/assignments/create", assignment)
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
 export const createCourse = (course) =>
   axios
     .post("/courses/create", course)

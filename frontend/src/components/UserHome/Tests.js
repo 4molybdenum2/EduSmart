@@ -42,7 +42,6 @@ const Tests = () => {
                   <Card
                     className={classes.card}
                     onClick={() => console.log("test")}>
-                    {/* TODO: Course-code or initials in Card Media */}
                     <CardContent className={classes.cardContent}>
                       <Typography gutterBottom variant="h5" component="h2">
                         {test.name}
