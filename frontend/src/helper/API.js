@@ -44,6 +44,12 @@ export const unlinkCourse = (courseID) =>
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
+export const getTestResults = () =>
+  axios
+    .get(`/users/results`)
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
 export const onAuth = (data, next) => {
   if (typeof window !== "undefined")
     localStorage.setItem("user", JSON.stringify(data));

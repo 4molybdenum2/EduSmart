@@ -8,6 +8,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import React, { useState, useEffect } from "react";
 import UserHome from "../UserHome";
+import { getTestResults } from "../../helper/API";
 
 const useStyles = makeStyles((theme) => ({
   main: { marginTop: theme.spacing(10), marginBottom: theme.spacing(8) },
@@ -27,33 +28,40 @@ const Tests = () => {
   const classes = useStyles();
   const [tests, setTests] = useState([]);
 
+  // fetch all test results on first render
   useEffect(() => {
     // Get Tests using API
-  }, [tests.name]);
+    getTestResults().then((data) => {
+      if (data.error) console.log(data.error.trim());
+      else {
+        console.log(data);
+        let tsts = data[0] ? data[0].tests : [];
+        setTests(tsts);
+      }
+    });
+  }, []);
 
   return (
     <UserHome>
       <main className={classes.main}>
         {tests.length > 0 && (
           <Container maxWidth="md" className={classes.grid}>
-            <Grid container spacing={4}>
-              {tests.map((course, id) => (
-                <Grid item key={id} xs={12} sm={6} md={4}>
-                  <Card
-                    className={classes.card}
-                    onClick={() => console.log("test")}>
-                    <CardContent className={classes.cardContent}>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {test.name}
-                      </Typography>
-                      <Typography variant="h5" color="textSecondary">
-                        {test.professor}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+            {tests.map((course, id) => (
+              <Card>
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {course.docName}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      {course.createdAt}
+                    </Typography>
+                </CardContent>
+              </Card>
+            ))}
           </Container>
         )}
       </main>
