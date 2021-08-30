@@ -28,7 +28,7 @@ app.use(
 app.use(express.json());
 app.use("/users", userRouter);
 app.use("/courses", courseRouter);
-app.use("/assignments", assignmentRouter);
+app.use("/assignments", isAuth, assignmentRouter);
 app.use("/tests/:courseId", isAuth, testRouter);
 
 mongoose.connect(
@@ -37,7 +37,7 @@ mongoose.connect(
     useNewUrlParser: true,
     useUnifiedTopology: true,
     autoIndex: false,
-    useFindAndModify: false
+    useFindAndModify: false,
   },
   () => {
     app.listen(PORT, () => {

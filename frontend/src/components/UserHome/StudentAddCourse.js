@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Container, Button } from "@material-ui/core";
-import { Redirect } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { Copyright, Toast } from "../../Commons";
 import { addCourseStudent } from "../../helper/API";
@@ -9,6 +9,7 @@ import { useStyles } from "../SignUp";
 
 const StudentAddCourse = () => {
   const classes = useStyles();
+  const history = useHistory();
   const [id, setId] = useState("");
   const [status, setStatus] = useState({ error: "", success: false });
   const { error, success } = status;
@@ -17,13 +18,9 @@ const StudentAddCourse = () => {
     if (id !== "") {
       addCourseStudent(id).then((data) => {
         if (data.error) setStatus({ error: data.error.trim(), success: false });
-        else setStatus({ error: "", success: true });
+        else setStatus({ error: "", success: data.message.trim() });
       });
     }
-  };
-
-  const redirect = () => {
-    if (success) return <Redirect to="/dashboard" />;
   };
 
   return (
@@ -61,7 +58,18 @@ const StudentAddCourse = () => {
           />
         )}
 
-        {redirect()}
+        {success && (
+          <Toast
+            type="success"
+            text={success}
+            open={success}
+            onClose={() => {
+              setStatus({ error: "", success: false });
+              history.push("/dashboard")
+            }}
+          />
+        )}
+
         <Box mt="auto" py={3}>
           <Copyright />
         </Box>

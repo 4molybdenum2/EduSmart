@@ -106,8 +106,9 @@ const AddCourse = () => {
               fullWidth
               variant="contained"
               color="primary"
-              className={classes.submit}>
-              Add Course
+              className={classes.submit}
+              style={{marginTop: "30px"}}>
+              Create Course
             </Button>
           </ValidatorForm>
         </div>

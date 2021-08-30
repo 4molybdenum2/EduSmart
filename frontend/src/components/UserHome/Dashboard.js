@@ -13,13 +13,14 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import { Add } from "@material-ui/icons";
 import copyText from "copy-text-to-clipboard";
-import { getCourses, isAuthenticated } from "../../helper/API";
+import { getCourses, isAuthenticated, unlinkCourse } from "../../helper/API";
 import UserHome from "../UserHome";
 import LetterAvatar from "../utils/LetterAvatar";
+import { Toast } from "../../Commons";
 
 const useStyles = makeStyles((theme) => ({
   main: { marginTop: theme.spacing(10), marginBottom: theme.spacing(8) },
-  grid: { padding: theme.spacing(0, 8) },
+  grid: { padding: theme.spacing(0, 6) },
   card: {
     height: "100%",
     display: "flex",
@@ -43,12 +44,33 @@ const Dashboard = () => {
   const classes = useStyles();
   const [courses, setCourses] = useState([]);
 
+  const [update, setUpdate] = useState(true);
+  const [status, setStatus] = useState({ error: "", success: false });
+  const { error, success } = status;
+
   useEffect(() => {
-    getCourses(id).then((data) => {
-      if (data.error) console.log(data.error.trim());
-      else setCourses(data.courses);
+    if (update) {
+      getCourses(id).then((data) => {
+        if (data.error) {
+          setStatus({ error: data.error.trim(), success: false });
+          setCourses([]);
+        } else {
+          setUpdate(false);
+          setCourses(data.courses);
+        }
+      });
+    }
+  }, [update]);
+
+  const unlink = (courseID) => {
+    unlinkCourse(courseID).then((data) => {
+      if (data.error) setStatus({ error: data.error.trim(), success: false });
+      else {
+        setUpdate(true);
+        setStatus({ error: "", success: data.message.trim() });
+      }
     });
-  }, []);
+  };
 
   return (
     <UserHome>
@@ -74,12 +96,24 @@ const Dashboard = () => {
                       </CardContent>
                     </Link>
                     <CardActions classes={{ root: classes.cardActions }}>
-                      <Button
-                        size="small"
-                        disableElevation
-                        onClick={() => copyText(course._id)}>
-                        Copy ID
-                      </Button>
+                      {!isStudent && (
+                        <Button
+                          size="small"
+                          color="secondary"
+                          disableElevation
+                          onClick={() => copyText(course._id)}>
+                          Copy ID
+                        </Button>
+                      )}
+                      {isStudent && (
+                        <Button
+                          size="small"
+                          disableElevation
+                          color="secondary"
+                          onClick={() => unlink(course._id)}>
+                          Unlink
+                        </Button>
+                      )}
                     </CardActions>
                   </Card>
                 </Grid>
@@ -88,7 +122,7 @@ const Dashboard = () => {
           </Container>
         )}
 
-        <Link href={isStudent ? "/scourses/add" : "/courses/add"}>
+        <Link href={isStudent ? "/courses/link" : "/courses/create"}>
           <Fab
             color="primary"
             aria-label="add"
@@ -96,6 +130,27 @@ const Dashboard = () => {
             <Add />
           </Fab>
         </Link>
+
+        {error && (
+          <Toast
+            type="error"
+            text={error}
+            open={error}
+            onClose={() => setStatus({ error: "", success: false })}
+          />
+        )}
+
+        {success && (
+          <Toast
+            type="success"
+            text={success}
+            open={success}
+            onClose={() => {
+              setUpdate(false);
+              setStatus({ error: "", success: false });
+            }}
+          />
+        )}
       </main>
     </UserHome>
   );

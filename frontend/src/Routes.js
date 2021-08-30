@@ -60,8 +60,8 @@ const Routes = () => {
         <NonLoginRoute path="/signin" component={SignIn} exact />
         <NonLoginRoute path="/signup" component={SignUp} exact />
         <LoginRoute path="/dashboard" component={Dashboard} exact />
-        <TeacherRoute path="/courses/add" component={AddCourse} exact />
-        <StudentRoute path="/scourses/add" component={StudentAddCourse} exact />
+        <TeacherRoute path="/courses/create" component={AddCourse} exact />
+        <StudentRoute path="/courses/link" component={StudentAddCourse} exact />
         <LoginRoute path="/tests" component={Tests} exact />
         <LoginRoute path="/assignment" component={Assignment} />
         <LoginRoute path="/calendar" component={Calendar} />

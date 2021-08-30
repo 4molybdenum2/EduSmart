@@ -1,9 +1,15 @@
 import express from "express";
-import { addAssignment, submitAssignment } from "../controllers/assignments";
-import { isAuth } from "../middleware/auth";
+import {
+  addAssignment,
+  getAssignment,
+  submitAssignment,
+  viewSubmission,
+} from "../controllers/assignments";
 
 const router = express.Router();
-router.post("/submit", isAuth, submitAssignment);
-router.post("/:courseID", isAuth, addAssignment);
+router.post("/submit", submitAssignment);
+router.post("/create", addAssignment);
+router.get("/:courseID", getAssignment);
+router.get("/view/:assignmentID", viewSubmission);
 
 export default router;

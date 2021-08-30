@@ -15,12 +15,12 @@ const useStyles = makeStyles((theme) => ({
 
 const UserHome = ({ children }) => {
   const classes = useStyles();
-  const {name} = isAuthenticated();
+  const { name } = isAuthenticated();
 
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar color="transparent" elevation={1} position="static">
+      <AppBar color="transparent" elevation={1} position="sticky">
         <Toolbar>
           <Typography variant="h6" className={classes.root}>
             Welcome {name}

@@ -69,6 +69,7 @@ export const login = async (req: Request, res: Response) => {
       );
 
       if (user) {
+        const { _id: id, name, isStudent } = user;
         if (tokenId) {
           const client = new OAuth2Client(process.env.CLIENT_ID);
           try {
@@ -77,7 +78,6 @@ export const login = async (req: Request, res: Response) => {
               audience: process.env.CLIENT_ID,
             });
 
-            const { _id: id, name, isStudent } = user;
             const token = signToken({ id, name, isStudent });
             const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
             res.cookie("token", token, {
@@ -92,7 +92,6 @@ export const login = async (req: Request, res: Response) => {
           }
         } else {
           const isMatch = await bcrypt.compare(password, user.password);
-          const { _id: id, name, isStudent } = user;
           if (isMatch) {
             const token = signToken({ id, name, isStudent });
             const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
@@ -127,6 +126,21 @@ export const enroll = async (req: Request, res: Response) => {
           console.log(e);
           return res.json({ error: "Enrollment Error" });
         } else return res.json({ message: "Enrolled successfully" });
+      }
+    );
+  } else return res.json({ error: "UNAUTHORIZED" });
+};
+
+export const unenroll = async (req: Request, res: Response) => {
+  if (res.locals.isStudent) {
+    User.findByIdAndUpdate(
+      res.locals.id,
+      { $pull: { courses: req.params.courseID } },
+      (e) => {
+        if (e) {
+          console.log(e);
+          return res.json({ error: "Unlink Error" });
+        } else return res.json({ message: "Unlinked successfully" });
       }
     );
   } else return res.json({ error: "UNAUTHORIZED" });

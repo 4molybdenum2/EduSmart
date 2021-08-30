@@ -10,12 +10,14 @@ const userSchema = new mongoose.Schema({
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
   assignmentSubmissions: [
     {
+      _id: false,
       assignment: { type: mongoose.Schema.Types.ObjectId, ref: "Assignment" },
       link: String,
     },
   ],
   testSubmissions: [
     {
+      _id: false,
       test: { type: mongoose.Schema.Types.ObjectId, ref: "Test" },
       marks: Number,
     },

@@ -29,9 +29,15 @@ export const createCourse = (course) =>
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
-export const addCourseStudent = (courseId) =>
+export const addCourseStudent = (courseID) =>
   axios
-    .post(`/users/${courseId}`)
+    .post(`/users/${courseID}`)
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const unlinkCourse = (courseID) =>
+  axios
+    .post(`/users/unlink/${courseID}`)
     .then((res) => res.data)
     .catch((e) => console.log(e));
 

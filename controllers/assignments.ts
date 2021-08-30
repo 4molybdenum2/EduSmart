@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import User from "../models/User";
 import Course from "../models/Course";
 
@@ -21,8 +22,7 @@ export const submitAssignment = async (req: Request, res: Response) => {
 };
 
 export const addAssignment = async (req: Request, res: Response) => {
-  const courseID = req.params.courseID;
-  const { title, description, dueDate } = req.body;
+  const { courseID, title, description, dueDate } = req.body;
 
   if (!res.locals.isStudent) {
     Course.findByIdAndUpdate(
@@ -32,9 +32,39 @@ export const addAssignment = async (req: Request, res: Response) => {
         if (e) {
           console.log(e);
           return res.json({ error: "Assignment Creation Error" });
-        }
-        return res.json({ message: "Assignment Created successfully" });
+        } else return res.json({ message: "Assignment Created successfully" });
       }
     );
   } else return res.json({ error: "UNAUTHORIZED" });
+};
+
+export const getAssignment = async (req: Request, res: Response) => {
+  const courseID = mongoose.Types.ObjectId(req.params.courseID);
+  Course.aggregate(
+    [
+      { $match: { _id: courseID } },
+      { $project: { tests: 0, schedule: 0, __v: 0 } },
+      { $unwind: "$assignments" },
+      { $sort: { "assignments.dueDate": -1 } },
+      {
+        $group: {
+          _id: { name: "$name", professor: "$professor" },
+          assignments: { $push: "$assignments" },
+        },
+      },
+    ],
+    (e: any, data: any) => {
+      if (e) {
+        console.log(e);
+        return res.json({ error: "Assignment Fetch Error" });
+      } else return res.json(data);
+    }
+  );
+};
+
+export const viewSubmission = async (req: Request, res: Response) => {
+  const assignment = mongoose.Types.ObjectId(req.params.assignmentID);
+  User.aggregate([
+    { $match: { "assignmentSubmission.assignment": assignment } },
+  ]);
 };
