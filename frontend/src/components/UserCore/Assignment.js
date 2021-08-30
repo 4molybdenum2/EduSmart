@@ -44,15 +44,19 @@ export default function Assignment() {
     getAssignments(id).then((data) => {
       if (data.error) console.log(data.error.trim());
       else {
-        setAssignments(data);
+        let asgs = data[0] ? data[0].assignments : [];
+        setAssignments(asgs);
       }
     });
-  }, [assignments, id]);
+  }, [id]);
 
   return (
     <Container>
       <h1>Assignments: </h1>
-      <Grid item xs={12} md={8}>
+
+      {
+        (assignments.length !== 0) ? 
+        <Grid item xs={12} md={8}>
         {assignments.map((assignment) => (
           <Card className={classes.root}>
             <CardActionArea>
@@ -78,7 +82,9 @@ export default function Assignment() {
             </CardActions>
           </Card>
         ))}
-      </Grid>
+      </Grid> : <p> No assignments currently !</p>
+      }
+      
     </Container>
   );
 }

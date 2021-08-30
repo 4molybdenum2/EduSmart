@@ -9,6 +9,7 @@ import {
   Link,
   CardActions,
   Button,
+  Tooltip,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Add } from "@material-ui/icons";
@@ -80,9 +81,9 @@ const Dashboard = () => {
             <Grid container spacing={4}>
               {courses.map((course, id) => (
                 <Grid item key={id} xs={12} sm={6} md={4}>
-                  <Card className={classes.card}>
+                  <Card className={classes.card} raised>
                     <Link
-                      href={`/assignment?id=${id}`}
+                      href={`/assignment?id=${course._id}`}
                       underline="none"
                       color="inherit">
                       <LetterAvatar text={course.name} css={classes.media} />
@@ -123,12 +124,14 @@ const Dashboard = () => {
         )}
 
         <Link href={isStudent ? "/courses/link" : "/courses/create"}>
-          <Fab
-            color="primary"
-            aria-label="add"
-            style={{ position: "absolute", bottom: "10%", right: "5%" }}>
-            <Add />
-          </Fab>
+          <Tooltip title="Add" aria-label="add">
+            <Fab
+              color="primary"
+              aria-label="add"
+              style={{ position: "absolute", bottom: "10%", right: "5%" }}>
+              <Add />
+            </Fab>
+          </Tooltip>
         </Link>
 
         {error && (
