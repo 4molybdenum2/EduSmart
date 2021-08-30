@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   password: String,
   googleId: String,
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
+  verified: { type: Boolean, default: false },
   assignmentSubmissions: [
     {
       _id: false,
@@ -38,6 +39,7 @@ export interface User extends Document {
   name: string;
   email: string;
   isStudent: boolean;
+  verified: boolean;
   _id: mongoose.Types.ObjectId;
   password: string;
   googleId: string;
