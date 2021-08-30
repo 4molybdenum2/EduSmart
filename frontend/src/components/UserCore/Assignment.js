@@ -30,7 +30,7 @@ export default function Assignment() {
       else {
         console.log(data);
         let asgs = data[0] ? data[0].assignments : [];
-        setAssignments([]);
+        setAssignments(asgs);
       }
     });
   }, []);
