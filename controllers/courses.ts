@@ -14,7 +14,7 @@ export const getCourses = async (req: Request, res: Response) => {
       if (e) {
         console.log(e);
         return res.json({ error: "Fetching Course Error" });
-      } else if (courses.courses.length == 0)
+      } else if (courses?.courses.length == 0)
         return res.json({ error: "No courses linked" });
       else return res.json(courses);
     });

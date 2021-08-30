@@ -18,6 +18,7 @@ import { getCourses, isAuthenticated, unlinkCourse } from "../../helper/API";
 import UserHome from "../UserHome";
 import LetterAvatar from "../utils/LetterAvatar";
 import { Toast } from "../../Commons";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   main: { marginTop: theme.spacing(10), marginBottom: theme.spacing(8) },
@@ -43,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
 const Dashboard = () => {
   const { id, isStudent } = isAuthenticated();
   const classes = useStyles();
+  const history = useHistory();
   const [courses, setCourses] = useState([]);
 
   const [update, setUpdate] = useState(true);
@@ -83,7 +85,9 @@ const Dashboard = () => {
                 <Grid item key={id} xs={12} sm={6} md={4}>
                   <Card className={classes.card} raised>
                     <Link
-                      href={`/assignment?id=${course._id}`}
+                      onClick={() =>
+                        history.push("/assignment", { courseID: course._id })
+                      }
                       underline="none"
                       color="inherit">
                       <LetterAvatar text={course.name} css={classes.media} />

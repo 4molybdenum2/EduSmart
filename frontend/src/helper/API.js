@@ -14,13 +14,10 @@ export const getCourses = () =>
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
-export const getAssignments = (id) =>
+export const getAssignments = (courseID) =>
   axios
-    .get(`/assignments/${id}`)
-    .then((res) => {
-      console.log(res.data);
-      return res.data;
-    })
+    .get(`/assignments/${courseID}`)
+    .then((res) => res.data)
     .catch((e) => console.log(e));
 
 export const createCourse = (course) =>

@@ -17,38 +17,24 @@ const useStyles = makeStyles({
     maxWidth: 345,
   },
 });
-
-const posts = [
-  {
-    title: "Some title",
-    description: "Some description",
-  },
-  {
-    title: "Some title",
-    description: "Some description",
-  },
-  {
-    title: "Some title",
-    description: "Some description",
-  },
-];
-
 export default function Assignment() {
   const classes = useStyles();
+  const { isStudent } = isAuthenticated();
+  const {
+    state: { courseID },
+  } = useLocation();
   const [assignments, setAssignments] = useState([]);
 
-  const search = useLocation().search;
-  const id = new URLSearchParams(search).get("id");
-
   useEffect(() => {
-    getAssignments(id).then((data) => {
+    getAssignments(courseID).then((data) => {
       if (data.error) console.log(data.error.trim());
       else {
+        console.log(data);
         let asgs = data[0] ? data[0].assignments : [];
         setAssignments(asgs);
       }
     });
-  }, [id]);
+  }, []);
 
   return (
     <Container>
@@ -72,14 +58,13 @@ export default function Assignment() {
                 </Typography>
               </CardContent>
             </CardActionArea>
-            <CardActions>
-              <Button size="small" color="primary">
-                Submit
-              </Button>
-              <Button size="small" color="primary">
-                Info
-              </Button>
-            </CardActions>
+            {isStudent && (
+              <CardActions>
+                <Button size="small" color="primary">
+                  Submit
+                </Button>
+              </CardActions>
+            )}
           </Card>
         ))}
       </Grid> : <p> No assignments currently !</p>
@@ -88,8 +73,6 @@ export default function Assignment() {
     </Container>
   );
 }
-
-// /assignment/:courseId
 
 Assignment.propTypes = {
   posts: PropTypes.array,
