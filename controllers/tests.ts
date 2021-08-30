@@ -57,7 +57,7 @@ export const viewTest = async (req: Request, res: Response) => {
         endTime: test.endTime,
         questions: testQuestions,
         maxMarks: test.maxMarks,
-        _id: test._id
+        _id: test._id,
       });
     } else return res.json({ error: "Test not found" });
   } else
@@ -106,7 +106,7 @@ export const viewResults = async (req: Request, res: Response) => {
   if (!res.locals.isStudent) {
     const { professor } = await Courses.findById(req.params.courseId);
     if (professor?._id.equals(res.locals.id)) {
-      const test = await TestModel.findById(req.params.testId);
+      const test = await TestModel.findById(req.params.testId).select("_id");
       if (test) {
         try {
           const results = await Users.aggregate([
@@ -121,26 +121,14 @@ export const viewResults = async (req: Request, res: Response) => {
                 },
               },
             },
-            {
-              $project: {
-                _id: 0,
-                name: 1,
-                email: 1,
-                testSubmissions: {
-                  $filter: {
-                    input: "$testSubmissions",
-                    as: "test",
-                    cond: {
-                      $eq: ["$$test", test._id],
-                    },
-                  },
-                },
-              },
-            },
+            { $project: { _id: 0, name: 1, testSubmissions: 1 } },
+            { $unwind: "$testSubmissions" },
+            { $match: { "testSubmissions.test": test._id } },
           ]);
-          return res.json({ results });
+
+          return res.json(results[0]);
         } catch (err) {
-          return res.json({ error: `Couldn't fetch results: ${err}` });
+          return res.json({ error: "Couldn't fetch test results" });
         }
       } else return res.json({ error: "Test not found" });
     } else
