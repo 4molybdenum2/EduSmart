@@ -18,7 +18,7 @@ assignments and taking MCQ tests for separate courses. The website also features
 
 - **TypeScript** on the backend,  **Javascript** on the frontend.
 - **ReactJS** on the frontend and **ExpressJS + NodeJS** on the backend.
-- **MongoDB** as a database with aggregation pipelines to model data.
+- **MongoDB** as a database with aggregation pipelines to manipulate data.
 
 
 # Installation:
@@ -26,9 +26,12 @@ assignments and taking MCQ tests for separate courses. The website also features
 - ` git clone https://github.com/4molybdenum2/EduSmart `
 - Run `yarn` in both the home directory and the frontend directory in the repo to install dependencies.
 - Add a `.env` file with the following paramaters
-    `MONGODB_URI= # Mongo uri for Mongo Atlas
-    JWT_SECRET= # your JWT secret
-    CLIENT_ID= # your google oauth client id`
+
+    ``` 
+    MONGODB_URI=  Mongo uri for Mongo Atlas
+    JWT_SECRET=  your JWT secret
+    CLIENT_ID=  your google oauth client id
+    ```
 - `yarn start` in home directory and frontend directory to start both frontend and backend
 - Server will be hosted on localhost:8000 and frontend on localhost:3000 in DEV mode.
 
