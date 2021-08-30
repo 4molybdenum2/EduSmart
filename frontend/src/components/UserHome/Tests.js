@@ -25,19 +25,19 @@ const useStyles = makeStyles((theme) => ({
 
 const Tests = () => {
   const classes = useStyles();
-  const [courses, setCourses] = useState([]);
+  const [tests, setTests] = useState([]);
 
   useEffect(() => {
-    // Get Courses using API
-  }, [courses]);
+    // Get Tests using API
+  }, [tests.name]);
 
   return (
     <UserHome>
       <main className={classes.main}>
-        {courses.length > 0 && (
+        {tests.length > 0 && (
           <Container maxWidth="md" className={classes.grid}>
             <Grid container spacing={4}>
-              {courses.map((course, id) => (
+              {tests.map((course, id) => (
                 <Grid item key={id} xs={12} sm={6} md={4}>
                   <Card
                     className={classes.card}
@@ -45,10 +45,10 @@ const Tests = () => {
                     {/* TODO: Course-code or initials in Card Media */}
                     <CardContent className={classes.cardContent}>
                       <Typography gutterBottom variant="h5" component="h2">
-                        {course.name}
+                        {test.name}
                       </Typography>
                       <Typography variant="h5" color="textSecondary">
-                        {course.professor}
+                        {test.professor}
                       </Typography>
                     </CardContent>
                   </Card>

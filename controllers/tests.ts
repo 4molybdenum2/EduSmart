@@ -40,63 +40,67 @@ export const getTest = async (req: Request, res: Response) => {
 };
 
 export const viewTest = async (req: Request, res: Response) => {
-  //TODO: check for startTime and endTime
   if (res.locals.isStudent) {
     const test = await TestModel.findById(req.params.testId);
     if (test) {
-      const testQuestions = test.questions.map((question) => ({
-        title: question.title,
-        opt1: question.opt1,
-        opt2: question.opt2,
-        opt3: question.opt3,
-        opt4: question.opt4,
-      }));
-      return res.json({
-        title: test.title,
-        startTime: test.startTime,
-        endTime: test.endTime,
-        questions: testQuestions,
-        maxMarks: test.maxMarks,
-        _id: test._id,
-      });
+      const date = new Date();
+      if (date >= test.startTime && date <= test.endTime) {
+        const testQuestions = test.questions.map((question) => ({
+          title: question.title,
+          opt1: question.opt1,
+          opt2: question.opt2,
+          opt3: question.opt3,
+          opt4: question.opt4,
+        }));
+        return res.json({
+          title: test.title,
+          startTime: test.startTime,
+          endTime: test.endTime,
+          questions: testQuestions,
+          maxMarks: test.maxMarks,
+          _id: test._id
+        });
+      } else return res.json({ error: "You cannot view the test at this time" });
     } else return res.json({ error: "Test not found" });
   } else
     return res.json({ error: "You must be a teacher to perform this action" });
 };
 
 export const submitTest = async (req: Request, res: Response) => {
-  //TODO: check for endTime
   if (res.locals.isStudent) {
     const test = await TestModel.findById(req.params.testId);
     if (test) {
-      const user = await Users.findById(res.locals.id);
-      if (user) {
-        if (
-          !user.testSubmissions
-            .map((submission) => submission.test)
-            .includes(test._id)
-        ) {
-          try {
-            const { answers }: { answers: Array<number> } = req.body;
-            let count = 0;
-            if (answers.length == test.questions.length) {
-              for (let i = 0; i < test.questions.length; i++) {
-                if (answers[i] == test.questions[i].answer) count++;
+      const date = new Date();
+      if (date >= test.startTime && date <= test.endTime) {
+        const user = await Users.findById(res.locals.id);
+        if (user) {
+          if (
+            !user.testSubmissions
+              .map((submission) => submission.test)
+              .includes(test._id)
+          ) {
+            try {
+              const { answers }: { answers: Array<number> } = req.body;
+              let count = 0;
+              if (answers.length == test.questions.length) {
+                for (let i = 0; i < test.questions.length; i++) {
+                  count += Number(answers[i] == test.questions[i].answer);
+                }
+                const marks = (count / test.questions.length) * test.maxMarks;
+                user.testSubmissions.push({ test, marks });
+                await user.save();
+                return res.json({ marks });
               }
-              const marks = (count / test.questions.length) * test.maxMarks;
-              user.testSubmissions.push({ test, marks });
-              await user.save();
-              return res.json({ marks });
+              return res.json({ error: "Invalid answers list" });
+            } catch (err) {
+              return res.json({ error: `Couldn't submit test: ${err}` });
             }
-            return res.json({ error: "Invalid answers list" });
-          } catch (err) {
-            return res.json({ error: `Couldn't submit test: ${err}` });
-          }
-        } else
-          return res.json({
-            error: "You have already submitted a response for this test",
-          });
-      } else return res.json({ error: "User not found" });
+          } else
+            return res.json({
+              error: "You have already submitted a response for this test",
+            });
+        } else return res.json({ error: "User not found" });
+      } else return res.json({ error: "You cannot submit the test at this time" });
     } else return res.json({ error: "Test not found" });
   } else
     return res.json({ error: "You must be a student to perform this action" });

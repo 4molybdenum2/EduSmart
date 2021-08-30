@@ -26,18 +26,24 @@ export default function Assignment() {
   const [assignments, setAssignments] = useState([]);
 
   useEffect(() => {
+    // TODO: Course Title and Professor
     getAssignments(courseID).then((data) => {
       if (data.error) console.log(data.error.trim());
       else {
-        // TODO: Course Title and Professor Name
         console.log(data);
+        let asgs = data[0] ? data[0].assignments : [];
+        setAssignments(asgs);
       }
     });
   }, []);
 
   return (
     <Container>
-      <Grid item xs={12} md={8}>
+      <h1>Assignments for Course: {courseID} </h1>
+
+      {
+        (assignments.length !== 0) ? 
+        <Grid item xs={12} md={8}>
         {assignments.map((assignment) => (
           <Card className={classes.root}>
             <CardActionArea>
@@ -62,7 +68,9 @@ export default function Assignment() {
             )}
           </Card>
         ))}
-      </Grid>
+      </Grid> : <p> No assignments currently !</p>
+      }
+      
     </Container>
   );
 }
