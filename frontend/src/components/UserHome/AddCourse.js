@@ -5,13 +5,14 @@ import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { TimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import copyText from "copy-text-to-clipboard";
 import { useStyles } from "../SignUp";
-import { Copyright, Toast } from "../../Commons";
+import { Copyright } from "../../Commons";
 import { createCourse } from "../../helper/API";
 import UserHome from "../UserHome";
 
 import MomentUtils from "@date-io/moment";
 import moment from "moment";
 import "moment/locale/en-in";
+import Toast from "../utils/Toast";
 moment.updateLocale("en-in", { week: { dow: 1 } });
 
 const AddCourse = () => {
@@ -107,34 +108,22 @@ const AddCourse = () => {
               variant="contained"
               color="primary"
               className={classes.submit}
-              style={{marginTop: "30px"}}>
+              style={{ marginTop: "30px" }}>
               Create Course
             </Button>
           </ValidatorForm>
         </div>
 
-        {error && (
-          <Toast
-            type="error"
-            text={error}
-            open={error}
-            onClose={() => setStatus({ error: "", success: false })}
-          />
-        )}
-
-        {success && (
-          <Toast
-            type="success"
-            text="Click on the Close Icon to copy the Course ID and go back to the Dashboard"
-            open={success}
-            duration={null}
-            onClose={() => {
-              copyText(success);
-              setStatus({ error: "", success: false });
-              history.push("/dashboard");
-            }}
-          />
-        )}
+        <Toast open={error} text={error} setStatus={setStatus} />
+        <Toast
+          error={false}
+          open={success}
+          text="Click on the Close Icon to copy the Course ID and go back to the Dashboard"
+          onCloseExtra={() => copyText(success)}
+          setStatus={setStatus}
+          dashboard={true}
+          duration={null}
+        />
 
         <Box mt="auto" py={3}>
           <Copyright />

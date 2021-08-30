@@ -13,12 +13,13 @@ import {
   Icon,
 } from "@material-ui/core";
 import { LockOutlined } from "@material-ui/icons";
-import { Copyright, Toast } from "../Commons";
+import { Copyright } from "../Commons";
 import { GoogleLogin } from "react-google-login";
 import { useStyles } from "./SignUp";
 import { Redirect } from "react-router-dom";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { auth, onAuth } from "../helper/API";
+import Toast from "./utils/Toast";
 
 export default function SignIn() {
   const classes = useStyles();
@@ -42,7 +43,10 @@ export default function SignIn() {
     setValues({ ...values, [name]: event.target.value });
 
   const responseGoogle = (response) => {
-    const { tokenId, profileObj: {email: g_mail} } = response;
+    const {
+      tokenId,
+      profileObj: { email: g_mail },
+    } = response;
     auth({ tokenId, email: g_mail }, "login").then((data) => {
       if (data.error) setStatus({ error: data.error.trim(), success: false });
       else onAuth(data, () => setStatus({ error: "", success: true }));
@@ -132,15 +136,7 @@ export default function SignIn() {
         </Box>
       </div>
 
-      {error && (
-        <Toast
-          type="error"
-          text={error}
-          open={error}
-          onClose={() => setStatus({ error: "", success: false })}
-        />
-      )}
-
+      <Toast open={error} text={error} setStatus={setStatus} />
       {redirect()}
       <Box mt="auto" py={3}>
         <Copyright />

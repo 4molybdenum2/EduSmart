@@ -11,67 +11,68 @@ import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import { useLocation } from "react-router-dom";
 import { getAssignments, isAuthenticated } from "../../helper/API";
+import UserHome from "../UserHome";
 
-const useStyles = makeStyles({
-  root: {
-    maxWidth: 345,
-  },
-});
+const useStyles = makeStyles((theme) => ({
+  grid: { padding: theme.spacing(5, 6) },
+}));
 export default function Assignment() {
   const classes = useStyles();
   const { isStudent } = isAuthenticated();
   const {
-    state: { courseID },
+    state: { courseID, name, professor },
   } = useLocation();
   const [assignments, setAssignments] = useState([]);
 
   useEffect(() => {
-    // TODO: Course Title and Professor
     getAssignments(courseID).then((data) => {
       if (data.error) console.log(data.error.trim());
       else {
         console.log(data);
         let asgs = data[0] ? data[0].assignments : [];
-        setAssignments(asgs);
+        setAssignments([]);
       }
     });
   }, []);
 
   return (
-    <Container>
-      <h1>Assignments for Course: {courseID} </h1>
-
-      {
-        (assignments.length !== 0) ? 
-        <Grid item xs={12} md={8}>
-        {assignments.map((assignment) => (
-          <Card className={classes.root}>
-            <CardActionArea>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
-                  {assignment.title}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {assignment.description}
-                </Typography>
-                <Typography variant="body3" color="textSecondary" component="p">
-                  {assignment.dueDate}
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-            {isStudent && (
-              <CardActions>
-                <Button size="small" color="primary">
-                  Submit
-                </Button>
-              </CardActions>
-            )}
-          </Card>
-        ))}
-      </Grid> : <p> No assignments currently !</p>
-      }
-      
-    </Container>
+    <UserHome>
+      <Container maxWidth="lg" className={classes.grid}>
+        <h1>Assignments for {name} </h1>
+        <Grid container spacing={4}>
+          {assignments.map((assignment) => (
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <Card>
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    {assignment.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p">
+                    {assignment.description}
+                  </Typography>
+                  <Typography
+                    variant="body3"
+                    color="textSecondary"
+                    component="p">
+                    {assignment.dueDate}
+                  </Typography>
+                </CardContent>
+                {isStudent && (
+                  <CardActions>
+                    <Button size="small" color="primary">
+                      Submit
+                    </Button>
+                  </CardActions>
+                )}
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    </UserHome>
   );
 }
 

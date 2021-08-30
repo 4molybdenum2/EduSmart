@@ -9,7 +9,11 @@ export const submitAssignment = async (req: Request, res: Response) => {
     const asg = await AssignmentModel.findById(assignment);
     if (asg) {
       const user = await User.findById(res.locals.id);
-      if (!user.assignmentSubmissions?.map(submission => submission.assignment).includes(assignment)) {
+      if (
+        !user.assignmentSubmissions
+          ?.map((submission) => submission.assignment)
+          .includes(assignment)
+      ) {
         if (new Date() <= asg.dueDate) {
           try {
             user.assignmentSubmissions.push({ assignment, link });
@@ -18,10 +22,17 @@ export const submitAssignment = async (req: Request, res: Response) => {
           } catch (err) {
             return res.json({ error: `Couldn't submit assignment: ${err}` });
           }
-        } else return res.json({ error: "The time for submitting the assignment has closed" });
-      } else return res.json({ error: "You have already submitted this assignment" });
+        } else
+          return res.json({
+            error: "The time for submitting the assignment has closed",
+          });
+      } else
+        return res.json({
+          error: "You have already submitted this assignment",
+        });
     } else return res.json({ error: "Assignment not found" });
-  } else return res.json({ error: "You must be a student to perform this action" });
+  } else
+    return res.json({ error: "You must be a student to perform this action" });
 };
 
 export const addAssignment = async (req: Request, res: Response) => {
@@ -43,7 +54,8 @@ export const addAssignment = async (req: Request, res: Response) => {
         return res.json({ error: `Couldn't create assignment: ${err}` });
       }
     } else return res.json({ error: "Course not found" });
-  } else return res.json({ error: "You must be a teacher to perform this action" });
+  } else
+    return res.json({ error: "You must be a teacher to perform this action" });
 };
 
 export const getAssignment = async (req: Request, res: Response) => {
@@ -56,10 +68,11 @@ export const getAssignment = async (req: Request, res: Response) => {
       { $sort: { "assignments.dueDate": -1 } },
       {
         $group: {
-          _id: { name: "$name", professor: "$professor" },
+          _id: "$_id",
           assignments: { $push: "$assignments" },
         },
       },
+      { $project: { _id: 0 } },
     ],
     (e: any, data: any) => {
       if (e) {

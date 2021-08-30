@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import { Box, Container, Button } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
-import { Copyright, Toast } from "../../Commons";
+import { Copyright } from "../../Commons";
 import { addCourseStudent } from "../../helper/API";
 import UserHome from "../UserHome";
 import { useStyles } from "../SignUp";
+import Toast from "../utils/Toast";
 
 const StudentAddCourse = () => {
   const classes = useStyles();
-  const history = useHistory();
   const [id, setId] = useState("");
   const [status, setStatus] = useState({ error: "", success: false });
   const { error, success } = status;
@@ -49,26 +48,14 @@ const StudentAddCourse = () => {
           </Button>
         </ValidatorForm>
 
-        {error && (
-          <Toast
-            type="error"
-            text={error}
-            open={error}
-            onClose={() => setStatus({ error: "", success: false })}
-          />
-        )}
-
-        {success && (
-          <Toast
-            type="success"
-            text={success}
-            open={success}
-            onClose={() => {
-              setStatus({ error: "", success: false });
-              history.push("/dashboard")
-            }}
-          />
-        )}
+        <Toast open={error} text={error} setStatus={setStatus} />
+        <Toast
+          error={false}
+          open={success}
+          text={success}
+          setStatus={setStatus}
+          dashboard={true}
+        />
 
         <Box mt="auto" py={3}>
           <Copyright />

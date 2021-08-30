@@ -15,11 +15,11 @@ import {
 } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
-import { rootStyle, Copyright, Toast } from "../Commons";
+import { rootStyle, Copyright } from "../Commons";
 import { auth, onAuth } from "../helper/API";
 import { GoogleLogin } from "react-google-login";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
-import { Redirect } from "react-router-dom";
+import Toast from "./utils/Toast";
 
 export const useStyles = makeStyles((theme) => ({
   paper: {
@@ -69,15 +69,14 @@ export default function SignUp() {
     setValues({ ...values, [name]: event.target.value });
 
   const responseGoogle = (response) => {
-    const { tokenId, profileObj: {email: g_mail} } = response;
+    const {
+      tokenId,
+      profileObj: { email: g_mail },
+    } = response;
     auth({ tokenId, isStudent, email: g_mail }, "signup").then((data) => {
       if (data.error) setStatus({ error: data.error.trim(), success: false });
       else onAuth(data, () => setStatus({ error: "", success: true }));
     });
-  };
-
-  const redirect = () => {
-    if (success) return <Redirect to="/dashboard" />;
   };
 
   return (
@@ -185,16 +184,16 @@ export default function SignUp() {
         </Box>
       </div>
 
-      {error && (
-        <Toast
-          type="error"
-          text={error}
-          open={error}
-          onClose={() => setStatus({ error: "", success: false })}
-        />
-      )}
+      <Toast open={error} text={error} setStatus={setStatus} />
+      <Toast
+        error={false}
+        open={success}
+        text="Signed up successfully\nTest"
+        setStatus={setStatus}
+        dashboard={true}
+        duration={null}
+      />
 
-      {redirect()}
       <Box mt="auto" py={3}>
         <Copyright />
       </Box>

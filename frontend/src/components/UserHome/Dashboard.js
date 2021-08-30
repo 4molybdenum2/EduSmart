@@ -17,7 +17,7 @@ import copyText from "copy-text-to-clipboard";
 import { getCourses, isAuthenticated, unlinkCourse } from "../../helper/API";
 import UserHome from "../UserHome";
 import LetterAvatar from "../utils/LetterAvatar";
-import { Toast } from "../../Commons";
+import Toast from "../utils/Toast";
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -86,7 +86,11 @@ const Dashboard = () => {
                   <Card className={classes.card} raised>
                     <Link
                       onClick={() =>
-                        history.push("/assignment", { courseID: course._id })
+                        history.push("/assignment", {
+                          courseID: course._id,
+                          name: course.name,
+                          professor: course.professor.name,
+                        })
                       }
                       underline="none"
                       color="inherit">
@@ -132,32 +136,20 @@ const Dashboard = () => {
             <Fab
               color="primary"
               aria-label="add"
-              style={{ position: "absolute", bottom: "10%", right: "5%" }}>
+              style={{ position: "fixed", bottom: "10%", right: "5%" }}>
               <Add />
             </Fab>
           </Tooltip>
         </Link>
 
-        {error && (
-          <Toast
-            type="error"
-            text={error}
-            open={error}
-            onClose={() => setStatus({ error: "", success: false })}
-          />
-        )}
-
-        {success && (
-          <Toast
-            type="success"
-            text={success}
-            open={success}
-            onClose={() => {
-              setUpdate(false);
-              setStatus({ error: "", success: false });
-            }}
-          />
-        )}
+        <Toast open={error} text={error} setStatus={setStatus} />
+        <Toast
+          error={false}
+          open={success}
+          text={success}
+          onCloseExtra={() => setUpdate(false)}
+          setStatus={setStatus}
+        />
       </main>
     </UserHome>
   );
