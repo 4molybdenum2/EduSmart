@@ -44,8 +44,8 @@ export default function Home() {
               color="textSecondary"
               paragraph>
               A complete platform for having online classes with support for
-              taking tests, online classes using video calling and creating
-              assignments.
+              taking tests and creating assignments. The wesbite also features
+              a fully custom calendar to check current tasks and status.
             </Typography>
 
             <div className={classes.authBtn}>
