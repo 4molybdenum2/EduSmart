@@ -18,8 +18,6 @@ const SubmitAssignment = () => {
   const [status, setStatus] = useState({ error: "", success: false });
   const { error, success } = status;
 
-  const [selectedFile, setSelectedFile] = React.useState(null);
-
   const onSubmit = () => {
     //   TODO: Send Request
     console.log(validUrl.isWebUri(link), assignmentID);
@@ -29,13 +27,7 @@ const SubmitAssignment = () => {
   const handleFile = ({target}) => {
     const file = target.files[0]
     console.log(file);
-    fileUploadAPI(file, assignmentID)
-    .then( data => {
-      console.log(data);
-    })
-    .catch( err => {
-      console.log(err);
-    })
+    fileUploadAPI(file, assignmentID);
   }
 
   return (

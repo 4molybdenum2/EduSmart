@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { google } from "googleapis";
+import path from "path";
 
 import User from "../models/User";
 import Course, { AssignmentModel } from "../models/Course";
@@ -10,7 +11,7 @@ export const submitAssignment = async (req: Request, res: Response) => {
   const { assignment } = req.body;
 
   console.log(assignment);
-  
+
   const marks: number = -1;
   if (res.locals.isStudent) {
     const asg = await AssignmentModel.findById(assignment);
@@ -26,7 +27,7 @@ export const submitAssignment = async (req: Request, res: Response) => {
             // Request full drive access.
             const SCOPES = ['https://www.googleapis.com/auth/drive'];
             const auth = new google.auth.GoogleAuth({
-              keyFile: "../keys.json",
+              keyFile: path.join(__dirname , "../keys.json"),
               scopes: SCOPES
             });
             const driveService = google.drive({ version: 'v3', auth });

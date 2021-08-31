@@ -23,18 +23,14 @@ export const createAssignment = (assignment) =>
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
-export const fileUploadAPI = (file, assignmentID) =>
-    axios.post('/assignments/submit',  {
-      body: {
-        assignment: assignmentID,
-        file: file,
-      },
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    .then((res) => res.data)
-    .catch((e) => console.log(e));
+export const fileUploadAPI = (file, assignmentID) => {
+  const formData = new FormData();
+  formData.append("assignment", assignmentID);
+  formData.append("file", file);
+  axios.post('/assignments/submit', formData)
+  .then((res) => res.data)
+  .catch((e) => console.log(e));
+}
 
 export const viewSubmissions = (courseID, assignmentID) =>
   axios
