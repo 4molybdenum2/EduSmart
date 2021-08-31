@@ -169,7 +169,7 @@ export default function SignUp() {
             Or continue with
           </Typography>
           <GoogleLogin
-            clientId="749827096167-dj5v0acsrmj35t7n0onr7qqqlhomcpph.apps.googleusercontent.com"
+            clientId="1096802061934-9u960cghqq9scr9nagu2qbbnt2kcg4ac.apps.googleusercontent.com"
             render={(props) => (
               <IconButton onClick={props.onClick}>
                 <Icon>
@@ -188,7 +188,7 @@ export default function SignUp() {
       <Toast
         error={false}
         open={success}
-        text="Signed up successfully\nTest"
+        text="Signed up successfully. Click on the Close Icon to go to the Dashboard."
         setStatus={setStatus}
         dashboard={true}
         duration={null}

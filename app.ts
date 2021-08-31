@@ -27,7 +27,7 @@ app.use(
 );
 app.use(express.json());
 app.use("/users", userRouter);
-app.use("/courses", courseRouter);
+app.use("/courses", isAuth, courseRouter);
 app.use("/assignments", isAuth, assignmentRouter);
 app.use("/tests/:courseId", isAuth, testRouter);
 

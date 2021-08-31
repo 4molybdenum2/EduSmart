@@ -75,11 +75,9 @@ const AddCourse = () => {
                 <Box
                   key={i}
                   m={1}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}>
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between">
                   <Checkbox
                     checked={days[day]}
                     onChange={() => setDays({ ...days, [day]: !days[day] })}

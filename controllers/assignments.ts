@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 import User from "../models/User";
 import Course, { AssignmentModel } from "../models/Course";
 
+// TODO: Test
 export const submitAssignment = async (req: Request, res: Response) => {
+  const marks: number = -1;
   const { link, assignment } = req.body;
   if (res.locals.isStudent) {
     const asg = await AssignmentModel.findById(assignment);
@@ -16,7 +18,7 @@ export const submitAssignment = async (req: Request, res: Response) => {
       ) {
         if (new Date() <= asg.dueDate) {
           try {
-            user.assignmentSubmissions.push({ assignment, link });
+            user.assignmentSubmissions.push({ assignment, marks, link });
             await user.save();
             return res.json({ message: "Assignment submitted successfully" });
           } catch (err) {
@@ -36,7 +38,7 @@ export const submitAssignment = async (req: Request, res: Response) => {
 };
 
 export const addAssignment = async (req: Request, res: Response) => {
-  const { courseID, title, description, dueDate } = req.body;
+  const { courseID, title, maxMarks, description, dueDate } = req.body;
 
   if (!res.locals.isStudent) {
     const course = await Course.findById(courseID);
@@ -44,14 +46,17 @@ export const addAssignment = async (req: Request, res: Response) => {
       try {
         const assignment = new AssignmentModel({
           title,
+          maxMarks,
           description,
           dueDate,
         });
         await assignment.save();
-        course.assignments.push(assignment);
+
+        course.assignments.push(assignment._id);
         await course.save();
+        return res.json({ message: "Assignment created Successfully" });
       } catch (err) {
-        return res.json({ error: `Couldn't create assignment: ${err}` });
+        return res.json({ error: `Couldn't create assignment` });
       }
     } else return res.json({ error: "Course not found" });
   } else
@@ -59,33 +64,47 @@ export const addAssignment = async (req: Request, res: Response) => {
 };
 
 export const getAssignment = async (req: Request, res: Response) => {
-  const courseID = mongoose.Types.ObjectId(req.params.courseID);
-  Course.aggregate(
-    [
-      { $match: { _id: courseID } },
-      { $project: { tests: 0, schedule: 0, __v: 0 } },
-      { $unwind: "$assignments" },
-      { $sort: { "assignments.dueDate": -1 } },
-      {
-        $group: {
-          _id: "$_id",
-          assignments: { $push: "$assignments" },
-        },
-      },
-      { $project: { _id: 0 } },
-    ],
-    (e: any, data: any) => {
-      if (e) {
-        console.log(e);
-        return res.json({ error: "Assignment Fetch Error" });
-      } else return res.json(data);
-    }
-  );
+  try {
+    const results = await Course.findById(req.params.courseID)
+      .select("assignments -_id")
+      .populate("assignments", "-__v");
+
+    if (results.assignments.length === 0)
+      return res.json({ error: "No assignments found for the given course" });
+    else return res.json(results.assignments);
+  } catch (err) {
+    return res.json({ error: "Assignment Fetch Error" });
+  }
 };
 
 export const viewSubmission = async (req: Request, res: Response) => {
-  const assignment = mongoose.Types.ObjectId(req.params.assignmentID);
-  User.aggregate([
-    { $match: { "assignmentSubmission.assignment": assignment } },
-  ]);
+  const { courseID, assignmentID } = req.body;
+
+  if (!res.locals.isStudent) {
+    const { professor } = await Course.findById(courseID).select("professor");
+    if (professor?.equals(res.locals.id)) {
+      try {
+        const assignment = Types.ObjectId(assignmentID);
+        const submissions = await User.aggregate([
+          {
+            $match: {
+              assignmentSubmissions: {
+                $elemMatch: { assignment: { $eq: assignment } },
+              },
+            },
+          },
+          { $project: { _id: 0, name: 1, assignmentSubmissions: 1 } },
+          { $unwind: "$assignmentSubmissions" },
+          { $match: { "assignmentSubmissions.assignment": assignment } },
+          { $project: { "assignmentSubmissions.assignment": 0 } },
+        ]);
+
+        return res.json(submissions);
+      } catch (e) {
+        return res.json({ error: "Couldn't fetch assignments" });
+      }
+    } else
+      return res.json({ error: "You are not the teacher for this course" });
+  } else
+    return res.json({ error: "You must be a teacher to perform this action" });
 };
