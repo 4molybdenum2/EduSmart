@@ -24,12 +24,12 @@ export const submitAssignment = async (req: Request, res: Response) => {
       ) {
         if (new Date() <= asg.dueDate) {
           try {
-            // Request full drive access.
-            const SCOPES = ['https://www.googleapis.com/auth/drive'];
-            const auth = new google.auth.GoogleAuth({
-              keyFile: path.join(__dirname , "../keys.json"),
-              scopes: SCOPES
+            const auth = new google.auth.OAuth2({
+              clientId: process.env.GOOGLE_DRIVE_CLIENT_ID,
+              clientSecret: process.env.GOOGLE_DRIVE_CLIENT_SECRET,
+              redirectUri: "https://developers.google.com/oauthplayground"
             });
+            auth.setCredentials({ refresh_token: process.env.GOOGLE_DRIVE_REFRESH_TOKEN });
             const driveService = google.drive({ version: 'v3', auth });
 
             let fileMetadata = {
