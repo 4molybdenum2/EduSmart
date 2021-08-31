@@ -49,7 +49,7 @@ export const submitAssignment = async (req: Request, res: Response) => {
             });
 
             if (response.status == 200) {
-              user.assignmentSubmissions.push({ assignment, marks, link: process.env.UPLOAD_FOLDER + '/' + response.data.id });
+              user.assignmentSubmissions.push({ assignment, marks, link: response.data.id });
               await user.save();
               return res.json({ message: "Assignment submitted successfully" });
             } return res.json({ message: "Couldn't submit assignment" });
