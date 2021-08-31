@@ -25,7 +25,7 @@ export const submitAssignment = async (req: Request, res: Response) => {
         if (new Date() <= asg.dueDate) {
           try {
             // Request full drive access.
-            const SCOPES = ['https://www.googleapis.com/auth/drive'];
+            const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
             const auth = new google.auth.GoogleAuth({
               keyFile: path.join(__dirname , "../keys.json"),
               scopes: SCOPES
