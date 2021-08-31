@@ -42,5 +42,5 @@ assignments and taking MCQ tests for separate courses. The website also features
     JWT_SECRET=  your JWT secret
     CLIENT_ID=  your google oauth client id
     ```
-- `yarn start` in home directory and frontend directory to start both frontend and backend
+- `yarn build:live` in home directory and `yarn dev` in the frontend directory to start both frontend and backend
 - Server will be hosted on localhost:8000 and frontend on localhost:3000 in DEV mode.
