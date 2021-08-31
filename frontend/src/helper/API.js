@@ -2,6 +2,9 @@ import axios from "axios";
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
+export const BACKEND_API = "http://localhost:8000";
+export const FRONTEND_URL = "http://localhost:3000";
+
 export const auth = (user, url) =>
   axios
     .post(`/users/${url}`, user)
@@ -17,6 +20,19 @@ export const getAssignments = (courseID) =>
 export const createAssignment = (assignment) =>
   axios
     .post("/assignments/create", assignment)
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const fileUploadAPI = (file, assignmentID) =>
+    axios.post('/assignments/submit',  {
+      body: {
+        assignment: assignmentID,
+        file,
+      },
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
@@ -74,6 +90,31 @@ export const getSchedule = () =>
     .then((res) => console.log(res.data))
     .catch((e) => console.log(e));
 
+export const forgotPasswordAPI = (email) =>
+  axios
+    .post("/users/forgot",{
+      email,
+    })
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const resetPasswordAPI = (token, newPassword) =>
+  axios
+    .post("/users/reset",{
+      token,
+      newPassword,
+    })
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const verifyEmailAPI = (token) =>
+    axios
+      .post("/users/verify",{
+        token,
+      })
+      .then((res) => res.data)
+      .catch((e) => console.log(e));
+
 export const onAuth = (data, next) => {
   if (typeof window !== "undefined")
     localStorage.setItem("user", JSON.stringify(data));
@@ -97,3 +138,4 @@ export const logout = () => {
       .catch((e) => console.log(e));
   }
 };
+

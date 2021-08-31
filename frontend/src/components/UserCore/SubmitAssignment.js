@@ -3,7 +3,7 @@ import { Box, Container, Button } from "@material-ui/core";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { useLocation } from "react-router-dom";
 import { Copyright } from "../../Commons";
-import { viewSubmissions } from "../../helper/API";
+import { viewSubmissions, fileUploadAPI } from "../../helper/API";
 import UserHome from "../UserHome";
 import { useStyles } from "../SignUp";
 import Toast from "../utils/Toast";
@@ -24,10 +24,20 @@ const SubmitAssignment = () => {
   };
 
   // TODO: Will be done using file if time
+  const handleFile = (event) => {
+    const file = event.target.files[0]
+    fileUploadAPI(file, assignmentID).then( data => {
+      console.log(data);
+    })
+    .catch( err => {
+      console.log(err);
+    })
+  }
+
   return (
     <UserHome>
       <Container component="main" maxWidth="xs" className={classes.root}>
-        <ValidatorForm className={classes.form} onSubmit={onSubmit}>
+        {/* <ValidatorForm className={classes.form} onSubmit={onSubmit}>
           <TextValidator
             variant="outlined"
             margin="normal"
@@ -48,8 +58,18 @@ const SubmitAssignment = () => {
             className={classes.submit}>
             Submit
           </Button>
-        </ValidatorForm>
-
+        </ValidatorForm> */}
+        <Button
+          variant="contained"
+          component="label"
+        >
+          Upload File
+          <input
+            type="file"
+            onChange={handleFile}
+            hidden
+          />
+        </Button>
         <Toast open={error} text={error} setStatus={setStatus} />
         <Toast
           error={false}

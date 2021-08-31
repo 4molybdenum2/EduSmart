@@ -53,6 +53,7 @@ const Tests = () => {
 
   useEffect(() => {
     setExpanded(tests.map(({ tests }) => tests.map(() => false)));
+    console.log('yes');
   }, [tests]);
 
   const Questions = ({ questions }) => {
