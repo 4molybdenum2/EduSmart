@@ -131,7 +131,7 @@ const Dashboard = () => {
         )}
 
         <Link href={isStudent ? "/courses/link" : "/courses/create"}>
-          <Tooltip title="Add" aria-label="add">
+          <Tooltip title="Add" aria-label="add" arrow interactive>
             <Fab
               color="primary"
               aria-label="add"

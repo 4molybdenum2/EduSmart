@@ -8,9 +8,9 @@ const Toast = ({
   open,
   text,
   onCloseExtra = () => void 0,
-  setStatus,
+  setStatus = (input) => console.log(input),
   dashboard = false,
-  duration = 2000
+  duration = 2000,
 }) => {
   const history = useHistory();
   const onClose = () => {

@@ -19,9 +19,10 @@ import moment from "moment";
 import "moment/locale/en-in";
 moment.updateLocale("en-in", { week: { dow: 1 } });
 
-const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles((theme) => ({
   grid: { padding: theme.spacing(5, 6) },
   center: { textAlign: "center" },
+  submit: { margin: theme.spacing(3, 0, 2) },
 }));
 
 export default function Assignment() {
@@ -51,7 +52,7 @@ export default function Assignment() {
           <h1 className={classes.center}>Assignments for {name}</h1>
           <Grid container spacing={4}>
             {assignments.map((assignment, i) => (
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12} key={i}>
+              <Grid item xs={12} key={i}>
                 <Card>
                   <Box px={2} py={1}>
                     <CardContent>
