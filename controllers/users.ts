@@ -73,7 +73,7 @@ export const login = async (req: Request, res: Response) => {
     const { email, password, tokenId } = req.body;
     if (email && (password || tokenId)) {
       const user = await User.findOne({ email }).select(
-        "name isStudent password"
+        "name isStudent password verified"
       );
 
       if (user) {
@@ -266,7 +266,7 @@ export const testResults = async (req: Request, res: Response) => {
       dbResults.courses.map((course) => tests.push(...course.tests));
 
       const results: any[] = [];
-      
+
 
       res.json({ tests, sub });
     } catch (e) {
