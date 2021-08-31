@@ -141,3 +141,36 @@ export const viewSubmission = async (req: Request, res: Response) => {
   } else
     return res.json({ error: "You must be a teacher to perform this action" });
 };
+
+export const checkAssignment = async (req: Request, res: Response) => {
+  const { assignmentId, userId, marks } = req.body;
+
+  if (!res.locals.isStudent) {
+    try {
+      const { maxMarks } = await AssignmentModel.findById(assignmentId);
+      if (maxMarks) {
+        const user = await User.findById(userId);
+        if (user) {
+          if (marks >= 0 && marks <= maxMarks) {
+            const index = user
+              .assignmentSubmissions?.
+              map((submission) => submission.assignment)
+              .findIndex(assignmentId);
+            if (index != -1) {
+              user.assignmentSubmissions[index].marks = marks;
+              await user.save();
+              return res.json({ message: "Marks submitted successfully" });
+            }
+            return res.json({ error: "Assignment submission not found for the given user" });
+          }
+          return res.json({ error: "Marks out of bounds" });
+        }
+        return res.json({ error: "User not found" });
+      }
+      return res.json({ error: "Assignment not found" });
+    } catch (err) {
+      return res.json({ error: `Couldn't submit marks: ${err}` });
+    }
+  }
+  else return res.json({ error: "You must be a teacher to perform this action" });
+}
