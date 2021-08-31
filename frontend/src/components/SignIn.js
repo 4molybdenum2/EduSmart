@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import {
   Avatar,
   Button,
+  Box,
   CssBaseline,
   Link,
   Grid,
-  Box,
   Typography,
   Container,
   Divider,
@@ -40,15 +40,11 @@ export default function SignIn() {
   };
 
   const forgotPassword = () => {
-    
-    forgotPasswordAPI(email)
-    .then((data) => {
-      if (data.error)
-       setStatus({ error: data.error.trim(), success: false });
-      else
-       setStatus({ error: "Mail sent successfully", success: false});
+    forgotPasswordAPI(email).then((data) => {
+      if (data.error) setStatus({ error: data.error.trim(), success: false });
+      else setStatus({ error: "Mail sent successfully", success: false });
     });
-  }
+  };
   const handleChange = (name) => (event) =>
     setValues({ ...values, [name]: event.target.value });
 
@@ -117,7 +113,17 @@ export default function SignIn() {
             Sign In
           </Button>
 
-          <Grid container justifyContent="flex-end">
+          <Grid container justifyContent="space-between">
+            <Grid item>
+              <Link
+                component="button"
+                onClick={() => forgotPassword()}
+                variant="body2"
+                underline="none">
+                Forgot Password?
+              </Link>
+            </Grid>
+
             <Grid item>
               <Link href="/signup" variant="body2" underline="none">
                 Don't have an account? Sign Up
@@ -125,12 +131,6 @@ export default function SignIn() {
             </Grid>
           </Grid>
         </ValidatorForm>
-
-          <Grid item>
-            <Link component="button" onClick={() => forgotPassword()} variant="body2" underline="none">
-              Forgot Password?
-            </Link>
-          </Grid>
 
         <Divider className={classes.divider} />
         <Box display="flex" alignItems="center">

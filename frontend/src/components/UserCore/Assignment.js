@@ -82,9 +82,15 @@ export default function Assignment() {
                         size="small"
                         color="secondary"
                         onClick={() =>
-                          history.push(`/assignment/submit`, {
-                            assignmentID: assignment._id,
-                          })
+                          isStudent
+                            ? history.push(`/assignment/submit`, {
+                                assignmentID: assignment._id,
+                              })
+                            : history.push(`/assignment/review`, {
+                                courseID: courseID,
+                                assignmentID: assignment._id,
+                                maxMarks: assignment.maxMarks
+                              })
                         }>
                         {isStudent ? "Submit" : "View Submissions"}
                       </Button>

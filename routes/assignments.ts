@@ -9,7 +9,6 @@ import {
 } from "../controllers/assignments";
 
 const router = express.Router();
-
 router.post("/submit", submitAssignment);
 router.post("/create", addAssignment);
 router.get("/:courseID", getAssignment);
