@@ -4,7 +4,7 @@
   "description": "A Google Classroom Clone",
   "main": "app.js",
   "scripts": {
-    "start": "npm run build:live",
+    "start": "npm run build && cp .env dist/ && node dist/app.js",
     "build": "tsc -p .",
     "build:live": "nodemon --watch './**/*.ts' --exec \"ts-node\" ./app.ts"
   },
