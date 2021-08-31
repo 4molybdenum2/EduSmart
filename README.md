@@ -19,7 +19,7 @@ assignments and taking MCQ tests for separate courses. The website also features
 - Signin/Signup with either your email or Google account. Verify your email if its not your Google Account.
 - You can sign-up as a teacher or a student.
 - You now have access to the Dashboard. Here you can access your courses or join a course by a link send by your teacher.
-- Click on a course to access its assginments. You can also submit your assignments here by uploading a file
+- Click on a course to access its assginments. You can also submit your assignments here by uploading a file through Google Drive
 - You can access your tests through the tests tab.
 - Your teacher can access your submitted assignments or tests.
 - You have a calendar to get the latest events or to check any due assignments
