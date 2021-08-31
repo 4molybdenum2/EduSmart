@@ -1,5 +1,4 @@
 import express from "express";
-import multer from "multer";
 
 import {
   addAssignment,
@@ -9,9 +8,6 @@ import {
 } from "../controllers/assignments";
 
 const router = express.Router();
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage });
-
 router.post("/submit", submitAssignment);
 router.post("/create", addAssignment);
 router.get("/:courseID", getAssignment);

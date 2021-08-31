@@ -6,12 +6,8 @@ import { google } from "googleapis";
 import User from "../models/User";
 import Course, { AssignmentModel } from "../models/Course";
 
-// TODO: Test
 export const submitAssignment = async (req: Request, res: Response) => {
   const { assignment } = req.body;
-
-  console.log(req.file);
-
   const marks: number = -1;
   if (res.locals.isStudent) {
     const asg = await AssignmentModel.findById(assignment);
@@ -27,33 +23,39 @@ export const submitAssignment = async (req: Request, res: Response) => {
             const auth = new google.auth.OAuth2({
               clientId: process.env.GOOGLE_DRIVE_CLIENT_ID,
               clientSecret: process.env.GOOGLE_DRIVE_CLIENT_SECRET,
-              redirectUri: "https://developers.google.com/oauthplayground"
+              redirectUri: "https://developers.google.com/oauthplayground",
             });
-            auth.setCredentials({ refresh_token: process.env.GOOGLE_DRIVE_REFRESH_TOKEN });
-            const driveService = google.drive({ version: 'v3', auth });
+            auth.setCredentials({
+              refresh_token: process.env.GOOGLE_DRIVE_REFRESH_TOKEN,
+            });
+            const driveService = google.drive({ version: "v3", auth });
 
             let fileMetadata = {
               name: req.file.originalname,
-              parents: [process.env.UPLOAD_FOLDER]
+              parents: [process.env.UPLOAD_FOLDER],
             };
 
             let media = {
               mimeType: req.file.mimetype,
-              body: fs.createReadStream(req.file.path)
+              body: fs.createReadStream(req.file.path),
             };
 
             const response = await driveService.files.create({
               requestBody: fileMetadata,
               media,
-              fields: 'id'
+              fields: "id",
             });
 
             if (response.status == 200) {
-              user.assignmentSubmissions.push({ assignment, marks, link: process.env.UPLOAD_FOLDER + '/' + response.data.id });
+              user.assignmentSubmissions.push({
+                assignment,
+                marks,
+                link: process.env.UPLOAD_FOLDER + "/" + response.data.id,
+              });
               await user.save();
               return res.json({ message: "Assignment submitted successfully" });
-            } return res.json({ message: "Couldn't submit assignment" });
-
+            }
+            return res.json({ message: "Couldn't submit assignment" });
           } catch (err) {
             return res.json({ error: `Couldn't submit assignment: ${err}` });
           }
@@ -99,7 +101,7 @@ export const addAssignment = async (req: Request, res: Response) => {
 export const getAssignment = async (req: Request, res: Response) => {
   try {
     const results = await Course.findById(req.params.courseID)
-      .select("assignments -_id")
+      .select("assignments")
       .populate("assignments", "-__v");
 
     if (results.assignments.length === 0)
@@ -126,10 +128,9 @@ export const viewSubmission = async (req: Request, res: Response) => {
               },
             },
           },
-          { $project: { _id: 0, name: 1, assignmentSubmissions: 1 } },
+          { $project: { name: 1, assignmentSubmissions: 1 } },
           { $unwind: "$assignmentSubmissions" },
           { $match: { "assignmentSubmissions.assignment": assignment } },
-          { $project: { "assignmentSubmissions.assignment": 0 } },
         ]);
 
         return res.json(submissions);

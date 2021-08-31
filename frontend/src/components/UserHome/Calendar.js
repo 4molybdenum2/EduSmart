@@ -9,7 +9,7 @@ const Calendar = () => {
   useEffect(() => {
     let assignments = [];
     let tests = [];
-    //TODO: get events here
+
     getSchedule().then(data => {
       console.log(data)
       data.forEach(course => {
@@ -32,7 +32,6 @@ const Calendar = () => {
     <FullCalendar
       plugins={[dayGridPlugin]}
       initialView="dayGridWeek"
-      //TODO: fetch events here and update calendar
       events={events}
     />
   );
