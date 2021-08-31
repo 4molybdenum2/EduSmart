@@ -17,8 +17,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({ dest: 'assignments/' });
 
 app.use(compression());
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));

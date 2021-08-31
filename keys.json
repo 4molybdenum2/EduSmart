@@ -1,0 +1,12 @@
+{
+    "type": "service_account",
+    "project_id": "edusmart-file-upload",
+    "private_key_id": "3b96393e444c24c26c1591ddce064e4142d57ef2",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCNPs2a0dHcloYj\n27ZFenIkBHMHr+2+lzzBDUoSIfYyCDXLOyp/wh3KCRWs/l/zqSWF6+1duOs6OAUW\nq66qL5OorNxMB/21q+o7mq+n1cdQe7dloqWslJe70J20n+btBLWh/tqOP9xPkYkO\nN8qfBGPeqn/4HC79TrY7K2kmpuKU7j020rzorftCACNAC5RjIcX30WDZdWfv1R1h\ngjo0DSFV+m5qWoi4nTqYQhIr4ETnG83b83x3raZScgoWxb0EvQn5U09shNFLXVtH\n/Gs+XB1jlKq6VKbZ2rTtyLh5RMWh4Jab7gNmYSdcs8EcAWgdWCrUggeOAXr5/x+D\n7zEyvTCFAgMBAAECggEAAZ8wsfdhfU/TEZ9K47TYS+dZz8jmHXAz5yLx58RCkLEY\n2fD8o4JSN77VRwry+bI1FeOPVWRqzFD/Zt6Ukg8EHQ5fnr6DYdhae8B/nRNnW6X5\n1uCUwOzNx1CECOJxEDcpg8FKpe9F1OiEjuKq+slSUrRTn53pOtpVIzUFbF634KV7\n71GixaobYTLkAtr8hQCDo5XY9nSO8Qfpv1jTtgE1FBMDBOfEYHdUiKZgrvGnUMwm\nwdYfJuPTrcXu87mNbGDR6qQBHt10QNCP0Ljcko6XAqNWRV5VCrxg0vo2g1eM16no\nRy0cCeZ02JjaN34O85x3u92r+xSI+Le7D6VrFEj/8QKBgQDEDUUG2MocoU017k8b\n0GfkxTYxvp6nQQlNntt8gK3Zea3OV3cyNpY4dzF54/W5Uf9aj+Ztv7D8yARwXIQR\nVMRpfp1AVcbXg5IWSXcZ4UDyZMd0BtI1dqxfaN+RYRsCdUURpD12HlypD1J8mQCr\nQ9WP2eYwRjZNA41tKES/Eu9PVQKBgQC4b1Z+BaH/Qln1QNID2InViRiayaJ/yNjM\ndpn6zHU/rXI9D4E2nvNI/O80bTEB7E20gGVy4ox6HLe3TRXSJwBAHGm0tG7Xbi+s\ngCxR7MPq4I+vlX/IZge5synyTsfXV73z00YH0M5fps4rEtMgAOIydVVH2fYaYqnn\nNOIu7fZ8cQKBgAwl+loDQvrlL+CgpLxHfLibU9FfS3t3tzjdGCKt4pfwR0na96Lf\n6Q0Urbcs3gQexaD5+8BfOXtgdY303aYpR4Z19w6OgiTGnV3OLZgn8htTDVzuM0Zm\n1SWQXRIoH0FWvPHr6HcSSJGdRnI8FOOH74rbaL0jDKhXCQNzlFb2uGeFAoGAFjT5\nshTVi5meoUQbxXDGL9rhBoousboqOHwzUBpcJ72nmqiKQ1xiKLCj0KkxFG0ycgBf\ntrSGe5GHoV97uCEQC6ggJizvh6rxvJB2Rar/cAF364lRqHx4g6iJ7W4E6+3ZpkkT\nDo/auXOpMVCD8T+J/M9Z5FvfIRAuKvOYJFRssFECgYEAiDQ8JsyKep8MIsq/RtFF\nMYgmt4PTYNAIdV5IpD9+l1HBf9ZNrdEmvhgRc3i8ugDHoN3bN8E9WqyrYn8FMVTC\nxaXd8Iq8QDpnvnnaG7W2roejScWvQ0U4i92ta0PdcOIg3+4ytQgR4C00WK73voGZ\noJ7g/pubzbO1VlC3C4i9sH0=\n-----END PRIVATE KEY-----\n",
+    "client_email": "edusmart-classroom@edusmart-file-upload.iam.gserviceaccount.com",
+    "client_id": "103449378166005547654",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/edusmart-classroom%40edusmart-file-upload.iam.gserviceaccount.com"
+}

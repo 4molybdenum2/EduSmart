@@ -83,7 +83,7 @@ export const getTestResults = (courseID, testID) =>
 export const getSchedule = () =>
   axios
     .get("/users/schedule")
-    .then((res) => console.log(res.data))
+    .then((res) => res.data)
     .catch((e) => console.log(e));
 
 export const forgotPasswordAPI = (email) =>
