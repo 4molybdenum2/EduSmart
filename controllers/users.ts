@@ -23,14 +23,21 @@ export const signUp = async (req: Request, res: Response) => {
             verified: false,
           });
           await user.save();
-          const token = signToken({ id: user._id }, process.env.VERIFY_TOKEN_SECRET);
+          const token = signToken(
+            { id: user._id },
+            process.env.VERIFY_TOKEN_SECRET
+          );
           await sendMail(
             email,
             "Verify your email",
             `Hello ${name}, Click this to verify your email: http://localhost:3000/verify?t=${token}`,
-            `Hello ${name}, <p>Click this to verify your email: <a href="http://localhost:3000/verify?t=${token}">Verify Your Email</a></p>`,
+            `Hello ${name}, <p>Click this to verify your email: <a href="http://localhost:3000/verify?t=${token}">Verify Your Email</a></p>`
           );
-          return res.json({ id: user._id, message: "Verify your email", isStudent });
+          return res.json({
+            id: user._id,
+            message: "Verify your email",
+            isStudent,
+          });
         } catch (err) {
           return res.json({ error: `Couldn't sign you up: ${err}` });
         }
@@ -59,7 +66,12 @@ export const signUp = async (req: Request, res: Response) => {
             expires,
           });
 
-          return res.json({ id: user._id, name: t_name, isStudent, message: "Successfully signed up" });
+          return res.json({
+            id: user._id,
+            name: t_name,
+            isStudent,
+            message: "Successfully signed up",
+          });
         } catch (e) {
           return res.json({ error: "Error occurred in Google Sign-up" });
         }
@@ -128,14 +140,21 @@ export const resendVerify = async (req: Request, res: Response) => {
   if (user) {
     if (!user.verified) {
       try {
-        const token = signToken({ id: user._id }, process.env.VERIFY_TOKEN_SECRET);
+        const token = signToken(
+          { id: user._id },
+          process.env.VERIFY_TOKEN_SECRET
+        );
         await sendMail(
           email,
           "Verify your email",
           `Hello ${user.name}, Click this to verify your email: http://localhost:3000/verify?t=${token}`,
-          `Hello ${user.name}, <p>Click this to verify your email: <a href="http://localhost:3000/verify?t=${token}">Verify Your Email</a></p>`,
+          `Hello ${user.name}, <p>Click this to verify your email: <a href="http://localhost:3000/verify?t=${token}">Verify Your Email</a></p>`
         );
-        return res.json({ id: user._id, message: "Verify your email", isStudent: user.isStudent });
+        return res.json({
+          id: user._id,
+          message: "Verify your email",
+          isStudent: user.isStudent,
+        });
       } catch (err) {
         return res.json({ error: `Couldn't resend verify email: ${err}` });
       }
@@ -143,7 +162,7 @@ export const resendVerify = async (req: Request, res: Response) => {
       return res.json({ message: "Your email is already verified" });
     }
   } else return res.json({ error: "User not found" });
-}
+};
 
 export const verifyMail = async (req: Request, res: Response) => {
   const { token } = req.body;
@@ -158,11 +177,12 @@ export const verifyMail = async (req: Request, res: Response) => {
         return res.json({ message: "Verified email successfully" });
       }
       return res.json({ message: "Your email has already been verified" });
-    } return res.json({ message: "User not found" });
+    }
+    return res.json({ message: "User not found" });
   } catch (err) {
     return res.json({ message: `Couldn't verify email: ${err}` });
   }
-}
+};
 
 export const sendResetPasswordEmail = async (req: Request, res: Response) => {
   const { email } = req.body;
@@ -170,22 +190,34 @@ export const sendResetPasswordEmail = async (req: Request, res: Response) => {
   if (user) {
     if (!user.googleId) {
       try {
-        const token = signToken({ id: user._id }, process.env.RESET_PASSWORD_SECRET);
+        const token = signToken(
+          { id: user._id },
+          process.env.RESET_PASSWORD_SECRET
+        );
         await sendMail(
           email,
           "Reset your password",
-          `Hello ${user.name}, Click this to reset your password: http://localhost:3000/verify?t=${token}`,
-          `Hello ${user.name}, <p>Click this to reset your password: <a href="http://localhost:3000/verify?t=${token}">Reset your password</a></p>`,
+          `Hello ${user.name}, Click this to reset your password: http://localhost:3000/forgot?t=${token}`,
+          `Hello ${user.name}, <p>Click this to reset your password: <a href="http://localhost:3000/forgot?t=${token}">Reset your password</a></p>`
         );
-        return res.json({ id: user._id, message: "Reset password mail sent", isStudent: user.isStudent });
+        return res.json({
+          id: user._id,
+          message: "Reset password mail sent",
+          isStudent: user.isStudent,
+        });
       } catch (err) {
-        return res.json({ error: `Couldn't send reset password email: ${err}` });
+        return res.json({
+          error: `Couldn't send reset password email: ${err}`,
+        });
       }
     } else {
-      return res.json({ error: "Google users cannot reset their password. Sign in with Google instead" });
+      return res.json({
+        error:
+          "Google users cannot reset their password. Sign in with Google instead",
+      });
     }
   } else return res.json({ error: "User not found" });
-}
+};
 
 export const resetPassword = async (req: Request, res: Response) => {
   const { token, newPassword } = req.body;
@@ -205,13 +237,17 @@ export const resetPassword = async (req: Request, res: Response) => {
           return res.json({ error: `Couldn't reset password: ${err}` });
         }
       } else {
-        return res.json({ error: "Google users cannot reset their password. Sign in with Google instead" });
+        return res.json({
+          error:
+            "Google users cannot reset their password. Sign in with Google instead",
+        });
       }
-    } return res.json({ message: "User not found" });
+    }
+    return res.json({ message: "User not found" });
   } catch (err) {
     return res.json({ message: `Couldn't verify email: ${err}` });
   }
-}
+};
 
 export const logout = async (req: Request, res: Response) => {
   if (req.cookies?.token) {
@@ -255,20 +291,71 @@ export const testResults = async (req: Request, res: Response) => {
     try {
       const dbResults = await User.findById(res.locals.id)
         .select("testSubmissions courses -_id")
-        .populate({
-          path: "courses",
-          select: "tests -_id",
-          populate: { path: "tests", model: "Test", select: "title maxMarks" },
-        });
+        .populate([
+          {
+            path: "courses",
+            select: "tests -_id",
+            populate: {
+              path: "tests",
+              model: "Test",
+              select: "title maxMarks startTime endTime",
+            },
+          },
+          { path: "testSubmissions.test", select: "title maxMarks" },
+        ]);
 
-      const sub = dbResults.testSubmissions;
-      const tests: any[] = [];
+      const submitted = dbResults.testSubmissions.map((sub) => ({
+        id: sub.test._id,
+        title: sub.test.title,
+        maxMarks: sub.test.maxMarks,
+        marks: sub.marks,
+      }));
+
+      const remain: any[] = [],
+        futureContainer: any[] = [],
+        future: any[] = [],
+        tests: any[] = [];
       dbResults.courses.map((course) => tests.push(...course.tests));
 
-      const results: any[] = [];
+      tests
+        .filter(
+          (test) =>
+            !submitted.some((sub) => String(test._id) === String(sub.id))
+        )
+        .forEach((test) => {
+          if (test.endTime < new Date())
+            remain.push({
+              id: test._id,
+              title: test.title,
+              marks: 0,
+              maxMarks: test.maxMarks,
+            });
+          else
+            futureContainer.push({
+              id: test._id,
+              title: test.title,
+              start: test.startTime,
+              maxMarks: test.maxMarks,
+            });
+        });
 
+      const now = new Date().getTime();
+      future.push(
+        ...futureContainer
+          .sort(
+            (a, b) =>
+              Math.abs(a.start.getTime() - now) -
+              Math.abs(b.start.getTime() - now)
+          )
+          .map((test) => ({
+            id: test.id,
+            title: test.title,
+            marks: "NA",
+            maxMarks: test.maxMarks,
+          }))
+      );
 
-      res.json({ tests, sub });
+      res.json({ submitted, remain, future });
     } catch (e) {
       console.log(e);
       return res.json({ error: "Fetching Results Error" });

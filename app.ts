@@ -29,7 +29,7 @@ app.use(express.json());
 app.use("/users", userRouter);
 app.use("/courses", isAuth, courseRouter);
 app.use("/assignments", isAuth, assignmentRouter);
-app.use("/tests/:courseId", isAuth, testRouter);
+app.use("/tests", isAuth, testRouter);
 
 mongoose.connect(
   process.env.MONGODB_URI,

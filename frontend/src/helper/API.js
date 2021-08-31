@@ -68,6 +68,24 @@ export const getTestResults = (courseID, testID) =>
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
+export const createTest = (courseID, test) =>
+  axios
+    .post(`/tests/${courseID}/new`, test)
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const getTest = (testID) =>
+  axios
+    .get(`/tests/${testID}/view`)
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const submitTest = (testID, answers) =>
+  axios
+    .post(`/tests/${testID}/submit`, { answers })
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
 export const getSchedule = () =>
   axios
     .get("/users/schedule")
