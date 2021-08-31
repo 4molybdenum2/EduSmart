@@ -266,7 +266,7 @@ export const testResults = async (req: Request, res: Response) => {
       dbResults.courses.map((course) => tests.push(...course.tests));
 
       const results: any[] = [];
-      
+
 
       res.json({ tests, sub });
     } catch (e) {
