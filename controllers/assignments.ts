@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
+import { google } from "googleapis";
+
 import User from "../models/User";
 import Course, { AssignmentModel } from "../models/Course";
 
 // TODO: Test
 export const submitAssignment = async (req: Request, res: Response) => {
+  const { assignment } = req.body;
   const marks: number = -1;
-  const { link, assignment } = req.body;
   if (res.locals.isStudent) {
     const asg = await AssignmentModel.findById(assignment);
     if (asg) {
@@ -18,9 +20,36 @@ export const submitAssignment = async (req: Request, res: Response) => {
       ) {
         if (new Date() <= asg.dueDate) {
           try {
-            user.assignmentSubmissions.push({ assignment, marks, link });
-            await user.save();
-            return res.json({ message: "Assignment submitted successfully" });
+            // Request full drive access.
+            const SCOPES = ['https://www.googleapis.com/auth/drive'];
+            const auth = new google.auth.GoogleAuth({
+              keyFile: "../keys.json",
+              scopes: SCOPES
+            });
+            const driveService = google.drive({ version: 'v3', auth });
+
+            let fileMetadata = {
+              name: req.file.filename,
+              parents: [process.env.UPLOAD_FOLDER]
+            };
+
+            let media = {
+              mimeType: req.file.mimetype,
+              body: req.file.stream
+            };
+
+            const response = await driveService.files.create({
+              requestBody: fileMetadata,
+              media,
+              fields: 'id'
+            });
+
+            if (response.status == 200) {
+              user.assignmentSubmissions.push({ assignment, marks, link: process.env.UPLOAD_FOLDER + '/' + response.data.id });
+              await user.save();
+              return res.json({ message: "Assignment submitted successfully" });
+            } return res.json({ message: "Couldn't submit assignment" });
+
           } catch (err) {
             return res.json({ error: `Couldn't submit assignment: ${err}` });
           }
