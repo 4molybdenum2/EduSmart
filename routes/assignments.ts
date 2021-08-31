@@ -9,10 +9,10 @@ import {
 } from "../controllers/assignments";
 
 const router = express.Router();
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage });
 
-router.post("/submit", upload.single('file'), submitAssignment);
+router.post("/submit", submitAssignment);
 router.post("/create", addAssignment);
 router.get("/:courseID", getAssignment);
 router.post("/view", viewSubmission);

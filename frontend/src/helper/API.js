@@ -27,7 +27,7 @@ export const fileUploadAPI = (file, assignmentID) =>
     axios.post('/assignments/submit',  {
       body: {
         assignment: assignmentID,
-        file,
+        file: file,
       },
       headers: {
         'Content-Type': 'multipart/form-data'

@@ -8,6 +8,9 @@ import Course, { AssignmentModel } from "../models/Course";
 // TODO: Test
 export const submitAssignment = async (req: Request, res: Response) => {
   const { assignment } = req.body;
+
+  console.log(assignment);
+  
   const marks: number = -1;
   if (res.locals.isStudent) {
     const asg = await AssignmentModel.findById(assignment);
