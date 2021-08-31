@@ -5,6 +5,7 @@ import compression from "compression";
 import helmet from "helmet";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import multer from "multer";
 
 import { isAuth } from "./middleware/auth";
 import userRouter from "./routes/users";
@@ -15,6 +16,8 @@ import testRouter from "./routes/tests";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+const upload = multer({ dest: 'assignments/' });
 
 app.use(compression());
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
@@ -28,6 +31,7 @@ app.use(
 app.use(express.json());
 app.use("/users", userRouter);
 app.use("/courses", isAuth, courseRouter);
+app.use("/assignments/submit", upload.single("file"), isAuth, assignmentRouter);
 app.use("/assignments", isAuth, assignmentRouter);
 app.use("/tests", isAuth, testRouter);
 

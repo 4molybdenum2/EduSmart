@@ -2,6 +2,9 @@ import axios from "axios";
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
+export const BACKEND_API = "http://localhost:8000";
+export const FRONTEND_URL = "http://localhost:3000";
+
 export const auth = (user, url) =>
   axios
     .post(`/users/${url}`, user)
@@ -19,6 +22,15 @@ export const createAssignment = (assignment) =>
     .post("/assignments/create", assignment)
     .then((res) => res.data)
     .catch((e) => console.log(e));
+
+export const fileUploadAPI = (file, assignmentID) => {
+  const formData = new FormData();
+  formData.append("assignment", assignmentID);
+  formData.append("file", file);
+  axios.post('/assignments/submit', formData)
+  .then((res) => res.data)
+  .catch((e) => console.log(e));
+}
 
 export const viewSubmissions = (courseID, assignmentID) =>
   axios
@@ -89,8 +101,33 @@ export const submitTest = (testID, answers) =>
 export const getSchedule = () =>
   axios
     .get("/users/schedule")
-    .then((res) => console.log(res.data))
+    .then((res) => res.data)
     .catch((e) => console.log(e));
+
+export const forgotPasswordAPI = (email) =>
+  axios
+    .post("/users/forgot",{
+      email,
+    })
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const resetPasswordAPI = (token, newPassword) =>
+  axios
+    .post("/users/reset",{
+      token,
+      newPassword,
+    })
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const verifyEmailAPI = (token) =>
+    axios
+      .post("/users/verify",{
+        token,
+      })
+      .then((res) => res.data)
+      .catch((e) => console.log(e));
 
 export const onAuth = (data, next) => {
   if (typeof window !== "undefined")
@@ -115,3 +152,4 @@ export const logout = () => {
       .catch((e) => console.log(e));
   }
 };
+

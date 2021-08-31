@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import fs from "fs";
 import { Types } from "mongoose";
 import { google } from "googleapis";
 
@@ -8,6 +9,9 @@ import Course, { AssignmentModel } from "../models/Course";
 // TODO: Test
 export const submitAssignment = async (req: Request, res: Response) => {
   const { assignment } = req.body;
+
+  console.log(req.file);
+
   const marks: number = -1;
   if (res.locals.isStudent) {
     const asg = await AssignmentModel.findById(assignment);
@@ -20,22 +24,22 @@ export const submitAssignment = async (req: Request, res: Response) => {
       ) {
         if (new Date() <= asg.dueDate) {
           try {
-            // Request full drive access.
-            const SCOPES = ['https://www.googleapis.com/auth/drive'];
-            const auth = new google.auth.GoogleAuth({
-              keyFile: "../keys.json",
-              scopes: SCOPES
+            const auth = new google.auth.OAuth2({
+              clientId: process.env.GOOGLE_DRIVE_CLIENT_ID,
+              clientSecret: process.env.GOOGLE_DRIVE_CLIENT_SECRET,
+              redirectUri: "https://developers.google.com/oauthplayground"
             });
+            auth.setCredentials({ refresh_token: process.env.GOOGLE_DRIVE_REFRESH_TOKEN });
             const driveService = google.drive({ version: 'v3', auth });
 
             let fileMetadata = {
-              name: req.file.filename,
+              name: req.file.originalname,
               parents: [process.env.UPLOAD_FOLDER]
             };
 
             let media = {
               mimeType: req.file.mimetype,
-              body: req.file.stream
+              body: fs.createReadStream(req.file.path)
             };
 
             const response = await driveService.files.create({

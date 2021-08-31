@@ -197,8 +197,8 @@ export const sendResetPasswordEmail = async (req: Request, res: Response) => {
         await sendMail(
           email,
           "Reset your password",
-          `Hello ${user.name}, Click this to reset your password: http://localhost:3000/forgot?t=${token}`,
-          `Hello ${user.name}, <p>Click this to reset your password: <a href="http://localhost:3000/forgot?t=${token}">Reset your password</a></p>`
+          `Hello ${user.name}, Click this to reset your password: http://localhost:3000/reset?t=${token}`,
+          `Hello ${user.name}, <p>Click this to reset your password: <a href="http://localhost:3000/reset?t=${token}">Reset your password</a></p>`,
         );
         return res.json({
           id: user._id,
@@ -223,7 +223,7 @@ export const resetPassword = async (req: Request, res: Response) => {
   const { token, newPassword } = req.body;
   try {
     type Token = { id: string };
-    const { id } = jwt.verify(token, process.env.VERIFY_TOKEN_SECRET) as Token;
+    const { id } = jwt.verify(token, process.env.RESET_PASSWORD_SECRET) as Token;
     const user = await User.findById(id);
     if (user) {
       if (!user.googleId) {

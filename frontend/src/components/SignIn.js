@@ -18,7 +18,7 @@ import { GoogleLogin } from "react-google-login";
 import { useStyles } from "./SignUp";
 import { Redirect } from "react-router-dom";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
-import { auth, onAuth } from "../helper/API";
+import { auth, forgotPasswordAPI, onAuth } from "../helper/API";
 import Toast from "./utils/Toast";
 
 export default function SignIn() {
@@ -39,6 +39,16 @@ export default function SignIn() {
     });
   };
 
+  const forgotPassword = () => {
+    
+    forgotPasswordAPI(email)
+    .then((data) => {
+      if (data.error)
+       setStatus({ error: data.error.trim(), success: false });
+      else
+       setStatus({ error: "Mail sent successfully", success: false});
+    });
+  }
   const handleChange = (name) => (event) =>
     setValues({ ...values, [name]: event.target.value });
 
@@ -115,6 +125,13 @@ export default function SignIn() {
             </Grid>
           </Grid>
         </ValidatorForm>
+
+          <Grid item>
+            <Link component="button" onClick={() => forgotPassword()} variant="body2" underline="none">
+              Forgot Password?
+            </Link>
+          </Grid>
+
         <Divider className={classes.divider} />
         <Box display="flex" alignItems="center">
           <Typography color="primary" variant="body2">

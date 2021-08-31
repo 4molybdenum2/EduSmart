@@ -14,6 +14,16 @@ assignments and taking MCQ tests for separate courses. The website also features
 - Necessary aggregation pipelines to manipulate data on the backend.
 - Student can join / leave courses for specific subjects.
 
+# Workflow:
+
+- Signin/Signup with either your email or Google account. Verify your email if its not your Google Account.
+- You can sign-up as a teacher or a student.
+- You now have access to the Dashboard. Here you can access your courses or join a course by a link send by your teacher.
+- Click on a course to access its assginments. You can also submit your assignments here by uploading a file
+- You can access your tests through the tests tab.
+- Your teacher can access your submitted assignments or tests.
+- You have a calendar to get the latest events or to check any due assignments
+
 # Tech-Stack:
 
 - **TypeScript** on the backend,  **Javascript** on the frontend.
@@ -34,5 +44,3 @@ assignments and taking MCQ tests for separate courses. The website also features
     ```
 - `yarn start` in home directory and frontend directory to start both frontend and backend
 - Server will be hosted on localhost:8000 and frontend on localhost:3000 in DEV mode.
-
-# Challenges Faced:

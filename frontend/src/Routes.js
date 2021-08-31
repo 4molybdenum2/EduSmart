@@ -17,6 +17,8 @@ import ViewTestResults from "./components/UserCore/ViewTestResults";
 import ViewSubmission from "./components/UserCore/ViewSubmission";
 import ViewTest from "./components/UserCore/ViewTest";
 import CreateTest from "./components/UserCore/CreateTest";
+import ForgotPassword from "./components/ForgotPassword";
+import VerifyEmail from "./components/VerifyEmail";
 
 const LoginRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -65,6 +67,8 @@ const Routes = () => {
       <Switch>
         <NonLoginRoute path="/signin" component={SignIn} exact />
         <NonLoginRoute path="/signup" component={SignUp} exact />
+        <NonLoginRoute path="/verify" component={VerifyEmail} exact />
+        <NonLoginRoute path="/reset" component={ForgotPassword} exact />
         <LoginRoute path="/dashboard" component={Dashboard} exact />
         <TeacherRoute path="/courses/create" component={AddCourse} exact />
         <StudentRoute path="/courses/link" component={StudentAddCourse} exact />
