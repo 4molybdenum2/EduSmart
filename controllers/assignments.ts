@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
+import fs from "fs";
 import { Types } from "mongoose";
 import { google } from "googleapis";
-import path from "path";
 
 import User from "../models/User";
 import Course, { AssignmentModel } from "../models/Course";
@@ -10,7 +10,7 @@ import Course, { AssignmentModel } from "../models/Course";
 export const submitAssignment = async (req: Request, res: Response) => {
   const { assignment } = req.body;
 
-  console.log(assignment);
+  console.log(req.file);
 
   const marks: number = -1;
   if (res.locals.isStudent) {
@@ -33,13 +33,13 @@ export const submitAssignment = async (req: Request, res: Response) => {
             const driveService = google.drive({ version: 'v3', auth });
 
             let fileMetadata = {
-              name: req.file.filename,
+              name: req.file.originalname,
               parents: [process.env.UPLOAD_FOLDER]
             };
 
             let media = {
               mimeType: req.file.mimetype,
-              body: req.file.stream
+              body: fs.createReadStream(req.file.path)
             };
 
             const response = await driveService.files.create({
