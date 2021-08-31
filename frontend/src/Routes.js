@@ -3,14 +3,20 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Assignment from "./components/UserCore/Assignment";
+import AddAssignment from "./components/UserCore/AddAssignment";
 import Calendar from "./components/UserHome/Calendar";
 import Home from "./components/Home";
 import { isAuthenticated } from "./helper/API";
 import Dashboard from "./components/UserHome/Dashboard";
 import AddCourse from "./components/UserHome/AddCourse";
 import StudentAddCourse from "./components/UserHome/StudentAddCourse";
-import Tests from "./components/UserHome/Tests";
+import Tests from "./components/UserCore/Tests";
 import { NotFound } from "./Commons";
+import SubmitAssignment from "./components/UserCore/SubmitAssignment";
+import ViewTestResults from "./components/UserCore/ViewTestResults";
+import ViewSubmission from "./components/UserCore/ViewSubmission";
+import ViewTest from "./components/UserCore/ViewTest";
+import CreateTest from "./components/UserCore/CreateTest";
 
 const LoginRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -63,10 +69,27 @@ const Routes = () => {
         <TeacherRoute path="/courses/create" component={AddCourse} exact />
         <StudentRoute path="/courses/link" component={StudentAddCourse} exact />
         <LoginRoute path="/tests" component={Tests} exact />
+        <StudentRoute path="/tests/submit" component={ViewTest} exact />
+        <TeacherRoute path="/tests/create" component={CreateTest} exact />
+        <TeacherRoute path="/tests/result" component={ViewTestResults} exact />
         <LoginRoute path="/assignment" component={Assignment} exact />
-        <TeacherRoute path="/assignments/create" exact />
+        <StudentRoute
+          path="/assignment/submit"
+          component={SubmitAssignment}
+          exact
+        />
+        <TeacherRoute
+          path="/assignment/create"
+          component={AddAssignment}
+          exact
+        />
+        <TeacherRoute
+          path="/assignment/review"
+          component={ViewSubmission}
+          exact
+        />
         <LoginRoute path="/calendar" component={Calendar} exact />
-        <Route path="/" component={Home} exact/>
+        <Route path="/" component={Home} exact />
         <Route path="*" component={NotFound} />
       </Switch>
     </BrowserRouter>

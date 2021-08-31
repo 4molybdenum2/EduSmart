@@ -5,9 +5,11 @@ const assignmentSchema = new mongoose.Schema({
   title: String,
   description: String,
   dueDate: Date,
+  maxMarks: Number
 });
 
 const questionSchema = new mongoose.Schema({
+  _id: false,
   title: { type: String, trim: true },
   opt1: { type: String, trim: true },
   opt2: { type: String, trim: true },
@@ -34,14 +36,15 @@ const courseSchema = new mongoose.Schema({
     thursday: String,
     friday: String,
   },
-  assignments: [assignmentSchema],
-  tests: [testSchema],
+  assignments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Assignment" }],
+  tests: [{ type: mongoose.Schema.Types.ObjectId, ref: "Test" }],
 });
 
 export interface Assignment extends Document {
   title: string;
   description: string;
   dueDate: Date;
+  maxMarks: number;
 }
 
 interface Question {

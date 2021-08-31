@@ -10,6 +10,6 @@ const router = express.Router();
 router.post("/submit", submitAssignment);
 router.post("/create", addAssignment);
 router.get("/:courseID", getAssignment);
-router.get("/view/:assignmentID", viewSubmission);
+router.post("/view", viewSubmission);
 
 export default router;

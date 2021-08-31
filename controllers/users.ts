@@ -96,6 +96,7 @@ export const login = async (req: Request, res: Response) => {
 
             return res.json({ id, name, isStudent });
           } catch (e) {
+            console.log(e);
             return res.json({ error: "Error occurred in Google Sign-in" });
           }
         } else {
@@ -251,15 +252,27 @@ export const unenroll = async (req: Request, res: Response) => {
 
 export const testResults = async (req: Request, res: Response) => {
   if (res.locals.isStudent) {
-    User.findById(res.locals.id)
-      .select("testSubmissions -_id")
-      .populate("testSubmissions.test", "title maxMarks")
-      .exec((e, results) => {
-        if (e) {
-          console.log(e);
-          return res.json({ error: "Fetching Results Error" });
-        } else return res.json(results);
-      });
+    try {
+      const dbResults = await User.findById(res.locals.id)
+        .select("testSubmissions courses -_id")
+        .populate({
+          path: "courses",
+          select: "tests -_id",
+          populate: { path: "tests", model: "Test", select: "title maxMarks" },
+        });
+
+      const sub = dbResults.testSubmissions;
+      const tests: any[] = [];
+      dbResults.courses.map((course) => tests.push(...course.tests));
+
+      const results: any[] = [];
+      
+
+      res.json({ tests, sub });
+    } catch (e) {
+      console.log(e);
+      return res.json({ error: "Fetching Results Error" });
+    }
   } else
     return res.json({ error: "You must be a student to perform this action" });
 };
@@ -267,11 +280,30 @@ export const testResults = async (req: Request, res: Response) => {
 export const getSchedule = async (req: Request, res: Response) => {
   User.findById(res.locals.id)
     .select("courses -_id")
-    .populate("courses", "schedule")
+    .populate(
+      res.locals.isStudent
+        ? {
+            path: "courses",
+            select: "schedule assignments tests -_id",
+            populate: [
+              {
+                path: "assignments",
+                model: "Assignment",
+                select: "title dueDate -_id",
+              },
+              {
+                path: "tests",
+                model: "Test",
+                select: "title startTime endTime -_id",
+              },
+            ],
+          }
+        : { path: "courses", select: "schedule -_id" }
+    )
     .exec((e, courses) => {
       if (e) {
         console.log(e);
         return res.json({ error: "Fetching Course Error" });
-      } else return res.json(courses);
+      } else return res.json(courses.courses);
     });
 };

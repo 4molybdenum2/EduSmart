@@ -46,3 +46,23 @@ export const addCourse = async (req: Request, res: Response) => {
     );
   } else return res.json({ error: "UNAUTHORIZED" });
 };
+
+export const getCourseTests = async (req: Request, res: Response) => {
+  if (!res.locals.isStudent) {
+    try {
+      const results = await Course.find({
+        $and: [
+          { professor: res.locals.id },
+          { tests: { $exists: true, $not: { $size: 0 } } },
+        ],
+      })
+        .select("name tests")
+        .populate("tests", "title maxMarks questions");
+
+      return res.json(results);
+    } catch (e) {
+      return res.json({ error: "Couldn't fetch tests" });
+    }
+  } else
+    return res.json({ error: "You must be a teacher to perform this action" });
+};

@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
       _id: false,
       assignment: { type: mongoose.Schema.Types.ObjectId, ref: "Assignment" },
       link: String,
+      marks: Number
     },
   ],
   testSubmissions: [
@@ -28,6 +29,7 @@ const userSchema = new mongoose.Schema({
 interface AssignmentSubmission {
   assignment: Assignment;
   link: string;
+  marks: number;
 }
 
 interface TestSubmission {

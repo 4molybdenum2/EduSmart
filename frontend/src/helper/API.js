@@ -8,12 +8,6 @@ export const auth = (user, url) =>
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
-export const getCourses = () =>
-  axios
-    .get("/courses")
-    .then((res) => res.data)
-    .catch((e) => console.log(e));
-
 export const getAssignments = (courseID) =>
   axios
     .get(`/assignments/${courseID}`)
@@ -26,9 +20,15 @@ export const createAssignment = (assignment) =>
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
-export const createCourse = (course) =>
+export const viewSubmissions = (courseID, assignmentID) =>
   axios
-    .post("/courses/create", course)
+    .post("/assignments/view", { courseID, assignmentID })
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const getCourses = () =>
+  axios
+    .get("/courses")
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
@@ -44,10 +44,34 @@ export const unlinkCourse = (courseID) =>
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
-export const getTestResults = () =>
+export const createCourse = (course) =>
   axios
-    .get(`/users/results`)
+    .post("/courses/create", course)
     .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const getTestResultsStudent = () =>
+  axios
+    .get("/users/results")
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const getCourseTests = () =>
+  axios
+    .get("/courses/tests")
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const getTestResults = (courseID, testID) =>
+  axios
+    .get(`/tests/${courseID}/${testID}/results`)
+    .then((res) => res.data)
+    .catch((e) => console.log(e));
+
+export const getSchedule = () =>
+  axios
+    .get("/users/schedule")
+    .then((res) => console.log(res.data))
     .catch((e) => console.log(e));
 
 export const onAuth = (data, next) => {

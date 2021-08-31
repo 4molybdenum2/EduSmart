@@ -29,16 +29,6 @@ export const createTest = async (req: Request, res: Response) => {
     return res.json({ error: "You must be a teacher to perform this action" });
 };
 
-export const getTest = async (req: Request, res: Response) => {
-  if (!res.locals.isStudent) {
-    console.log(req.params.testId);
-    const test = await TestModel.findById(req.params.testId);
-    if (test) return res.json({ test });
-    else return res.json({ error: "Test not found" });
-  } else
-    return res.json({ error: "You must be a teacher to perform this action" });
-};
-
 export const viewTest = async (req: Request, res: Response) => {
   if (res.locals.isStudent) {
     const test = await TestModel.findById(req.params.testId);
@@ -52,20 +42,23 @@ export const viewTest = async (req: Request, res: Response) => {
           opt3: question.opt3,
           opt4: question.opt4,
         }));
+
         return res.json({
           title: test.title,
           startTime: test.startTime,
           endTime: test.endTime,
           questions: testQuestions,
           maxMarks: test.maxMarks,
-          _id: test._id
+          _id: test._id,
         });
-      } else return res.json({ error: "You cannot view the test at this time" });
+      } else
+        return res.json({ error: "You cannot view the test at this time" });
     } else return res.json({ error: "Test not found" });
   } else
     return res.json({ error: "You must be a teacher to perform this action" });
 };
 
+// TODO: Test
 export const submitTest = async (req: Request, res: Response) => {
   if (res.locals.isStudent) {
     const test = await TestModel.findById(req.params.testId);
@@ -100,7 +93,8 @@ export const submitTest = async (req: Request, res: Response) => {
               error: "You have already submitted a response for this test",
             });
         } else return res.json({ error: "User not found" });
-      } else return res.json({ error: "You cannot submit the test at this time" });
+      } else
+        return res.json({ error: "You cannot submit the test at this time" });
     } else return res.json({ error: "Test not found" });
   } else
     return res.json({ error: "You must be a student to perform this action" });
@@ -117,20 +111,18 @@ export const viewResults = async (req: Request, res: Response) => {
             {
               $match: {
                 testSubmissions: {
-                  $elemMatch: {
-                    test: {
-                      $eq: test._id,
-                    },
-                  },
+                  $elemMatch: { test: { $eq: test._id } },
                 },
               },
             },
             { $project: { _id: 0, name: 1, testSubmissions: 1 } },
             { $unwind: "$testSubmissions" },
             { $match: { "testSubmissions.test": test._id } },
+            { $project: { "testSubmissions.test": 0 } },
+            { $sort: { "testSubmissions.marks": -1 } },
           ]);
 
-          return res.json(results[0]);
+          return res.json(results);
         } catch (err) {
           return res.json({ error: "Couldn't fetch test results" });
         }
