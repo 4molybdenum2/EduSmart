@@ -47,7 +47,11 @@ export const submitAssignment = async (req: Request, res: Response) => {
             });
 
             if (response.status == 200) {
-              user.assignmentSubmissions.push({ assignment, marks, link: response.data.id });
+              user.assignmentSubmissions.push({
+                assignment,
+                marks,
+                link: response.data.id,
+              });
               await user.save();
               return res.json({ message: "Assignment submitted successfully" });
             }
@@ -149,16 +153,18 @@ export const checkAssignment = async (req: Request, res: Response) => {
         const user = await User.findById(userId);
         if (user) {
           if (marks >= 0 && marks <= maxMarks) {
-            const index = user
-              .assignmentSubmissions?.
-              map((submission) => submission.assignment)
-              .findIndex(assignmentId);
+            const index = user.assignmentSubmissions
+              ?.map((submission) => submission.assignment)
+              .indexOf(assignmentId);
+
             if (index != -1) {
               user.assignmentSubmissions[index].marks = marks;
               await user.save();
               return res.json({ message: "Marks submitted successfully" });
             }
-            return res.json({ error: "Assignment submission not found for the given user" });
+            return res.json({
+              error: "Assignment submission not found for the given user",
+            });
           }
           return res.json({ error: "Marks out of bounds" });
         }
@@ -168,6 +174,6 @@ export const checkAssignment = async (req: Request, res: Response) => {
     } catch (err) {
       return res.json({ error: `Couldn't submit marks: ${err}` });
     }
-  }
-  else return res.json({ error: "You must be a teacher to perform this action" });
-}
+  } else
+    return res.json({ error: "You must be a teacher to perform this action" });
+};

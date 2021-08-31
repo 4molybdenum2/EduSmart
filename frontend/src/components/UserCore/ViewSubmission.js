@@ -19,6 +19,7 @@ const ViewSubmission = () => {
 
   useEffect(() => {
     viewSubmissions(courseID, assignmentID).then((data) => {
+      console.log(data);
       if (data.error) setStatus({ error: data.error.trim(), success: false });
       else setSub(data);
     });
@@ -29,7 +30,7 @@ const ViewSubmission = () => {
   }, [sub]);
 
   const onSubmit = (userID, assignmentID, mark) => {
-    sendMarks({ userId: userID, assignmentId: assignmentID, marks: mark }).then(
+    sendMarks({ userId: userID, assignmentId: assignmentID, marks: Number(mark) }).then(
       (data) => {
         if (data.error) setStatus({ error: data.error.trim(), success: false });
         else setStatus({ error: "", success: `${mark} Marks awarded` });
@@ -64,7 +65,7 @@ const ViewSubmission = () => {
                         variant="outlined"
                         margin="normal"
                         fullWidth
-                        label="Maximum Marks"
+                        label="Marks"
                         value={marks[i]}
                         onChange={(e) => {
                           if (!isNaN(e.target.value))

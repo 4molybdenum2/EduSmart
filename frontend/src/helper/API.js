@@ -20,15 +20,11 @@ export const createAssignment = (assignment) =>
     .then((res) => res.data)
     .catch((e) => console.log(e));
 
-export const fileUploadAPI = (file, assignmentID) => {
-  const formData = new FormData();
-  formData.append("assignment", assignmentID);
-  formData.append("file", file);
+export const fileUploadAPI = (formData) =>
   axios
     .post("/assignments/submit", formData)
     .then((res) => res.data)
     .catch((e) => console.log(e));
-};
 
 export const viewSubmissions = (courseID, assignmentID) =>
   axios
@@ -38,7 +34,7 @@ export const viewSubmissions = (courseID, assignmentID) =>
 
 export const sendMarks = (body) =>
   axios
-    .post("", body)
+    .post("/assignments/check", body)
     .then((res) => res.data)
     .catch((e) => console.log(e));
 

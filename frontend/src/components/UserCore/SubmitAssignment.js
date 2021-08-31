@@ -19,7 +19,14 @@ const SubmitAssignment = () => {
   const handleFile = ({ target }) => {
     const file = target.files[0];
     console.log(file);
-    fileUploadAPI(file, assignmentID);
+
+    const formData = new FormData();
+    formData.append("assignment", assignmentID);
+    formData.append("file", file);
+    fileUploadAPI(formData).then((data) => {
+      if (data.error) setStatus({ error: data.error.trim(), success: false });
+      else setStatus({ error: "", success: data.message });
+    });
   };
 
   return (
